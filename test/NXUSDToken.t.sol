@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.33;
 
-import "forge-std/Test.sol";
+import {Test} from "forge-std/Test.sol";
 import { NXUSDToken } from "../src/core/NXUSDToken.sol";
 
 contract NXUSDTokenTest is Test {
