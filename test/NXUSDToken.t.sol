@@ -124,4 +124,20 @@ contract NXUSDTokenTest is Test {
 
     event NXUSDMinted(address indexed to, uint256 amount, address indexed by);
     event NXUSDBurned(address indexed from, uint256 amount, address indexed by);
+
+    function testNonAdminCannotSetMinter() public {
+
+        vm.expectRevert();
+
+        vm.prank(user);
+        token.setMinter(minter, true);
+    }
+
+    function testNonAdminCannotSetBurner() public {
+
+        vm.expectRevert();
+
+        vm.prank(user);
+        token.setBurner(burner, true);
+    }
 }
