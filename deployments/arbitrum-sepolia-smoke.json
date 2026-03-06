@@ -2,6 +2,7 @@
   "network": "arbitrum-sepolia",
   "chainId": 421614,
   "deploymentType": "smoke",
+  "status": "live-success",
   "admin": "0xB4518cebFf8a92A8514f90F21B86e7Cb987F4ab6",
   "keeper": "0xB4518cebFf8a92A8514f90F21B86e7Cb987F4ab6",
   "contracts": {
@@ -13,7 +14,16 @@
     "LiquidationEngine": "0x031D403D5F776f5e13C010eebB135f4CeBaC1167"
   },
   "artifacts": {
-    "broadcastRun": "broadcast/DeploySmokeStack.s.sol/421614/run-latest.json",
-    "cacheRun": "cache/DeploySmokeStack.s.sol/421614/run-latest.json"
+    "deployBroadcastRun": "broadcast/DeploySmokeStack.s.sol/421614/run-latest.json",
+    "deployCacheRun": "cache/DeploySmokeStack.s.sol/421614/run-latest.json",
+    "scenarioBroadcastRun": "broadcast/SmokeScenario.s.sol/421614/run-latest.json",
+    "scenarioCacheRun": "cache/SmokeScenario.s.sol/421614/run-latest.json"
+  },
+  "scenarioResult": {
+    "seizedCollateralWei": "875000000000000000",
+    "adminNxusdBalanceWei": "1000000000000000000000",
+    "adminCollateralBalanceWei": "8875000000000000000",
+    "vaultDebtWei": "1000000000000000000000",
+    "vaultCollateralWei": "1125000000000000000"
   }
 }
