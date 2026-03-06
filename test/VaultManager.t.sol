@@ -74,7 +74,7 @@ contract VaultManagerTest is Test {
 
     function testMintFailsWithoutCollateral() public {
 
-        vm.expectRevert(bytes("VAULT: insufficient collateral"));
+        vm.expectRevert(bytes("VAULT: unsafe mint"));
 
         vm.prank(user);
         vault.mint(1000e18);
