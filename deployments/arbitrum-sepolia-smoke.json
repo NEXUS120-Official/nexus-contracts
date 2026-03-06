@@ -1,0 +1,19 @@
+{
+  "network": "arbitrum-sepolia",
+  "chainId": 421614,
+  "deploymentType": "smoke",
+  "admin": "0xB4518cebFf8a92A8514f90F21B86e7Cb987F4ab6",
+  "keeper": "0xB4518cebFf8a92A8514f90F21B86e7Cb987F4ab6",
+  "contracts": {
+    "MockCollateral": "0xac7B279113FFafa3c6296E7A1656113a03c26459",
+    "MockFeed": "0x011e869d0c28D8519AD89a200F3866e1303e9384",
+    "NXUSDToken": "0x949de94EdcFa6fC4baAD02E1C8fC2b14027e1B13",
+    "OracleModule": "0x5301A64D262C0E9DD54Fdf89e6e6Fde3EE0D252E",
+    "VaultManager": "0x333eED2B54C3101323e3eEb3A95a5DAB5fB2fcCc",
+    "LiquidationEngine": "0x031D403D5F776f5e13C010eebB135f4CeBaC1167"
+  },
+  "artifacts": {
+    "broadcastRun": "broadcast/DeploySmokeStack.s.sol/421614/run-latest.json",
+    "cacheRun": "cache/DeploySmokeStack.s.sol/421614/run-latest.json"
+  }
+}
