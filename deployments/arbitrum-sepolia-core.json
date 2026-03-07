@@ -6,8 +6,13 @@
   "admin": "0xB4518cebFf8a92A8514f90F21B86e7Cb987F4ab6",
   "keeper": "0xB4518cebFf8a92A8514f90F21B86e7Cb987F4ab6",
   "inputs": {
-    "collateralToken": "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
-    "oracleFeed": ""
+    "collateralToken": "",
+    "oracleFeed": "",
+    "oracleMaxDelay": 3600,
+    "vaultMaxDelay": 3600,
+    "minCollateralRatioBps": 15000,
+    "liquidationRatioBps": 13000,
+    "closeFactorBps": 5000
   },
   "contracts": {
     "NXUSDToken": "",
@@ -18,5 +23,9 @@
   "artifacts": {
     "broadcastRun": "",
     "cacheRun": ""
+  },
+  "verification": {
+    "rolesWired": false,
+    "postDeployVerified": false
   }
 }
