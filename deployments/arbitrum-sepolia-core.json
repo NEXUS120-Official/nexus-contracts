@@ -1,0 +1,22 @@
+{
+  "network": "arbitrum-sepolia",
+  "chainId": 421614,
+  "deploymentType": "core",
+  "status": "pending",
+  "admin": "0xB4518cebFf8a92A8514f90F21B86e7Cb987F4ab6",
+  "keeper": "0xB4518cebFf8a92A8514f90F21B86e7Cb987F4ab6",
+  "inputs": {
+    "collateralToken": "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
+    "oracleFeed": ""
+  },
+  "contracts": {
+    "NXUSDToken": "",
+    "OracleModule": "",
+    "VaultManager": "",
+    "LiquidationEngine": ""
+  },
+  "artifacts": {
+    "broadcastRun": "",
+    "cacheRun": ""
+  }
+}
