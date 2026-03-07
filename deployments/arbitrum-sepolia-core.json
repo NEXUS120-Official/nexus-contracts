@@ -2,12 +2,12 @@
   "network": "arbitrum-sepolia",
   "chainId": 421614,
   "deploymentType": "core",
-  "status": "pending",
+  "status": "live-success",
   "admin": "0xB4518cebFf8a92A8514f90F21B86e7Cb987F4ab6",
   "keeper": "0xB4518cebFf8a92A8514f90F21B86e7Cb987F4ab6",
   "inputs": {
-    "collateralToken": "",
-    "oracleFeed": "",
+    "collateralToken": "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
+    "oracleFeed": "0xdE5746880005C8958866199E392f664B38D3807f",
     "oracleMaxDelay": 3600,
     "vaultMaxDelay": 3600,
     "minCollateralRatioBps": 15000,
@@ -15,17 +15,17 @@
     "closeFactorBps": 5000
   },
   "contracts": {
-    "NXUSDToken": "",
-    "OracleModule": "",
-    "VaultManager": "",
-    "LiquidationEngine": ""
+    "NXUSDToken": "0x217615B878e37D191a1Ab21aA82EBb70F6D60Ed5",
+    "OracleModule": "0xe0893024Fd7Bd69Eb2a81873Aff823694789c22A",
+    "VaultManager": "0x2289f46AcbbC4CE3314195250420716C421e9a21",
+    "LiquidationEngine": "0x23308F2560837ac2dC8168691457Ad7dcEDc74C4"
   },
   "artifacts": {
-    "broadcastRun": "",
-    "cacheRun": ""
+    "broadcastRun": "broadcast/DeployCore.s.sol/421614/run-latest.json",
+    "cacheRun": "cache/DeployCore.s.sol/421614/run-latest.json"
   },
   "verification": {
-    "rolesWired": false,
-    "postDeployVerified": false
+    "rolesWired": true,
+    "postDeployVerified": true
   }
 }
