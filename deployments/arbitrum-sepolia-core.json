@@ -7,7 +7,7 @@
   "keeper": "0xB4518cebFf8a92A8514f90F21B86e7Cb987F4ab6",
   "inputs": {
     "collateralToken": "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
-    "oracleFeed": "0xdE5746880005C8958866199E392f664B38D3807f",
+    "oracleFeed": "0xd30e2101a97dcbAeBCBC04F14C3f624E67A35165",
     "oracleMaxDelay": 3600,
     "vaultMaxDelay": 3600,
     "minCollateralRatioBps": 15000,
@@ -15,17 +15,31 @@
     "closeFactorBps": 5000
   },
   "contracts": {
-    "NXUSDToken": "0x217615B878e37D191a1Ab21aA82EBb70F6D60Ed5",
-    "OracleModule": "0xe0893024Fd7Bd69Eb2a81873Aff823694789c22A",
-    "VaultManager": "0x2289f46AcbbC4CE3314195250420716C421e9a21",
-    "LiquidationEngine": "0x23308F2560837ac2dC8168691457Ad7dcEDc74C4"
+    "NXUSDToken": "0x75e95a98Bb76b92d9cD67908a4E1dA3Fa177e43b",
+    "OracleModule": "0x28791F8A2b60aA765fEC2326CFf532989Df9514a",
+    "VaultManager": "0x20df14c8C41FBC8d44E4059F8715bEeBcd4D0B25",
+    "LiquidationEngine": "0x4f5f3A491287e21904f243e57865144CC5a956e6"
   },
   "artifacts": {
     "broadcastRun": "broadcast/DeployCore.s.sol/421614/run-latest.json",
-    "cacheRun": "cache/DeployCore.s.sol/421614/run-latest.json"
+    "cacheRun": "cache/DeployCore.s.sol/421614/run-latest.json",
+    "verifyRun": "script/PostDeployVerify.s.sol",
+    "scenarioBroadcastRun": "broadcast/CoreLiveScenario.s.sol/421614/run-latest.json",
+    "scenarioCacheRun": "cache/CoreLiveScenario.s.sol/421614/run-latest.json"
   },
   "verification": {
     "rolesWired": true,
-    "postDeployVerified": true
+    "postDeployVerified": true,
+    "coreLiveScenarioExecuted": true
+  },
+  "scenarioResult": {
+    "oraclePrice": "196970156047",
+    "oracleUpdatedAt": "1772910419",
+    "oracleDecimals": 8,
+    "depositAmountWei": "10000000000000000",
+    "mintAmountWei": "5000000000000000000",
+    "adminNxusdBalanceWei": "5000000000000000000",
+    "vaultDebtWei": "5000000000000000000",
+    "vaultCollateralWei": "10000000000000000"
   }
 }
