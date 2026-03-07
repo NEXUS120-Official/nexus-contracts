@@ -16,7 +16,7 @@ contract LiquidationEngine is AccessControl {
 
     bytes32 public constant KEEPER_ROLE = keccak256("KEEPER_ROLE");
 
-    IERC20 public immutable nxusd;
+    IERC20 public immutable NXUSD;
     IVaultLiquidation public vault;
 
     uint256 public closeFactorBps;
@@ -45,7 +45,7 @@ contract LiquidationEngine is AccessControl {
 
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
 
-        nxusd = IERC20(nxusd_);
+        NXUSD = IERC20(nxusd_);
         vault = IVaultLiquidation(vault_);
         closeFactorBps = closeFactorBps_;
 
@@ -86,12 +86,12 @@ contract LiquidationEngine is AccessControl {
         require(repayAmount <= maxRepay, "LIQ: exceeds close factor");
 
         require(
-            nxusd.transferFrom(msg.sender, address(this), repayAmount),
+            NXUSD.transferFrom(msg.sender, address(this), repayAmount),
             "LIQ: transferFrom failed"
         );
 
         require(
-            nxusd.transfer(account, repayAmount),
+            NXUSD.transfer(account, repayAmount),
             "LIQ: transfer to account failed"
         );
 

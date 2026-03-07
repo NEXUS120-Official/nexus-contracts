@@ -20,8 +20,8 @@ contract VaultManager is AccessControl {
 
     bytes32 public constant KEEPER_ROLE = keccak256("KEEPER_ROLE");
 
-    IERC20 public immutable collateral;
-    INXUSD public immutable nxusd;
+    IERC20 public immutable COLLATERAL;
+    INXUSD public immutable NXUSD;
     IOracleModule public oracle;
 
     uint256 public minCollateralRatioBps;
@@ -37,7 +37,7 @@ contract VaultManager is AccessControl {
     event Burn(address indexed user, uint256 amount);
 
     event OracleSet(address oracle, address indexed by);
-    event RatiosSet(uint256 minCRBps, uint256 liqCRBps, address indexed by);
+    event RatiosSet(uint256 minCrBps, uint256 liqCrBps, address indexed by);
     event MaxDelaySet(uint256 maxDelay, address indexed by);
 
     event Liquidated(
@@ -52,8 +52,8 @@ contract VaultManager is AccessControl {
         address collateral_,
         address nxusd_,
         address oracle_,
-        uint256 minCRBps_,
-        uint256 liqCRBps_,
+        uint256 minCrBps_,
+        uint256 liqCrBps_,
         uint256 maxDelay_
     ) {
 
@@ -62,24 +62,24 @@ contract VaultManager is AccessControl {
         require(nxusd_ != address(0), "VAULT: nxusd is zero");
         require(oracle_ != address(0), "VAULT: oracle is zero");
 
-        require(minCRBps_ >= 10000, "VAULT: minCR < 100%");
-        require(liqCRBps_ >= 10000, "VAULT: liqCR < 100%");
-        require(minCRBps_ >= liqCRBps_, "VAULT: minCR < liqCR");
+        require(minCrBps_ >= 10000, "VAULT: minCR < 100%");
+        require(liqCrBps_ >= 10000, "VAULT: liqCR < 100%");
+        require(minCrBps_ >= liqCrBps_, "VAULT: minCR < liqCR");
 
         require(maxDelay_ > 0, "VAULT: maxDelay is zero");
 
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
 
-        collateral = IERC20(collateral_);
-        nxusd = INXUSD(nxusd_);
+        COLLATERAL = IERC20(collateral_);
+        NXUSD = INXUSD(nxusd_);
         oracle = IOracleModule(oracle_);
 
-        minCollateralRatioBps = minCRBps_;
-        liquidationRatioBps = liqCRBps_;
+        minCollateralRatioBps = minCrBps_;
+        liquidationRatioBps = liqCrBps_;
         maxDelay = maxDelay_;
 
         emit OracleSet(oracle_, admin);
-        emit RatiosSet(minCRBps_, liqCRBps_, admin);
+        emit RatiosSet(minCrBps_, liqCrBps_, admin);
         emit MaxDelaySet(maxDelay_, admin);
     }
 
@@ -89,18 +89,18 @@ contract VaultManager is AccessControl {
         emit OracleSet(oracle_, msg.sender);
     }
 
-    function setRatios(uint256 minCRBps_, uint256 liqCRBps_)
+    function setRatios(uint256 minCrBps_, uint256 liqCrBps_)
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        require(minCRBps_ >= 10000, "VAULT: minCR < 100%");
-        require(liqCRBps_ >= 10000, "VAULT: liqCR < 100%");
-        require(minCRBps_ >= liqCRBps_, "VAULT: minCR < liqCR");
+        require(minCrBps_ >= 10000, "VAULT: minCR < 100%");
+        require(liqCrBps_ >= 10000, "VAULT: liqCR < 100%");
+        require(minCrBps_ >= liqCrBps_, "VAULT: minCR < liqCR");
 
-        minCollateralRatioBps = minCRBps_;
-        liquidationRatioBps = liqCRBps_;
+        minCollateralRatioBps = minCrBps_;
+        liquidationRatioBps = liqCrBps_;
 
-        emit RatiosSet(minCRBps_, liqCRBps_, msg.sender);
+        emit RatiosSet(minCrBps_, liqCrBps_, msg.sender);
     }
 
     function setMaxDelay(uint256 maxDelay_) external onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -115,7 +115,7 @@ contract VaultManager is AccessControl {
         collateralOf[msg.sender] += amount;
 
         require(
-            collateral.transferFrom(msg.sender, address(this), amount),
+            COLLATERAL.transferFrom(msg.sender, address(this), amount),
             "VAULT: transferFrom failed"
         );
 
@@ -130,7 +130,7 @@ contract VaultManager is AccessControl {
 
         require(_isSafe(msg.sender), "VAULT: unsafe after withdraw");
 
-        require(collateral.transfer(msg.sender, amount), "VAULT: transfer failed");
+        require(COLLATERAL.transfer(msg.sender, amount), "VAULT: transfer failed");
 
         emit Withdraw(msg.sender, amount);
     }
@@ -142,7 +142,7 @@ contract VaultManager is AccessControl {
 
         require(_isSafe(msg.sender), "VAULT: unsafe mint");
 
-        nxusd.mint(msg.sender, amount);
+        NXUSD.mint(msg.sender, amount);
 
         emit Mint(msg.sender, amount);
     }
@@ -153,7 +153,7 @@ contract VaultManager is AccessControl {
 
         debtOf[msg.sender] -= amount;
 
-        nxusd.burn(msg.sender, amount);
+        NXUSD.burn(msg.sender, amount);
 
         emit Burn(msg.sender, amount);
     }
@@ -278,10 +278,10 @@ contract VaultManager is AccessControl {
         debtOf[account] -= repayAmount;
         collateralOf[account] -= seizeAmount;
 
-        nxusd.burn(account, repayAmount);
+        NXUSD.burn(account, repayAmount);
 
         require(
-            collateral.transfer(liquidator, seizeAmount),
+            COLLATERAL.transfer(liquidator, seizeAmount),
             "VAULT: collateral transfer failed"
         );
 
