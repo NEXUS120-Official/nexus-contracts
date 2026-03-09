@@ -1,7 +1,10 @@
 {
   "network": "arbitrum-sepolia",
-  "status": "PREPARED_NOT_DEPLOYED",
-  "safe_address": "SAFE_ADDRESS_PENDING",
+  "chainId": 421614,
+  "status": "DEPLOYED_AND_CUTOVER_COMPLETE",
+  "safe_address": "0x8626240187bb366a8566D338b84a7F84f237164F",
+  "safe_singleton": "0x530AfAA77269915Df68471C4eEd504D4564B020E",
+  "safe_factory": "0xCbc346Bbd200460f22285ff1B28Cb071674D3689",
   "threshold": 4,
   "signer_count": 7,
   "signers": [
@@ -15,10 +18,47 @@
   ],
   "guardian_separate": "0x8EC04BBC3E3f8256d1295a6Be25ebF8DacC40c5a",
   "keeper_separate": "0x8150dbba9F0960300a360033882685ca450a7038",
+  "deployment": {
+    "singleton_tx": "0x40719a65d9e5c47ae260a0cba8c7982cebb29681102963ac70eb9e826150071e",
+    "factory_tx": "0xe6405d6d2baad8e4e730774f1b4a8f7f5251eb6c0e79e858e0498589bfaa0115",
+    "proxy_tx": "0xcbd11663e79afda7fc4b27ba9ce0651313c5c22b52bb67393bd95ebe5efd0a00",
+    "singleton_block": 248552258,
+    "factory_block": 248552264,
+    "proxy_block": 248552275
+  },
+  "grant": {
+    "txs": [
+      "0x4ee81959ee1e8105034ed9657b8e7a2841e1605fbbeb97a5497fa4f7ffa0bced",
+      "0xb179547e328dee33ff6353d537e3ad9f55484a66b31110dd14baf43575efb762",
+      "0x3307d83776e1e39d4d01b54ffd303f96a34da624bd9a7e8b22b3a0a9d1505923",
+      "0xbd051b78a2b75fdc7ec59381cace2184a8c2b139ba93a91b40d0213427707508"
+    ],
+    "status": "PASS"
+  },
+  "revoke": {
+    "txs": [
+      "0xd9af9e1545729e0dcf3e5ddf20f5b75d77464e2e3a76ea2561722994f8ed8f1e",
+      "0xbb28434795990a794c8f7a00f9d7faee143424f1d77d298c92cdff976cbf5486",
+      "0x51bb7c96228cb441630803f6ad6bc1c83f49b8bcd8ad80dd8a9ca3a19d2046b2",
+      "0x96b41ef6b9863a6aced7165a8e561e1bc4796fd05eaea090e7e4775615bb2f66"
+    ],
+    "status": "PASS"
+  },
+  "verification": {
+    "dual_topology_verify": "PASS",
+    "final_verify": "PASS",
+    "safe_code_check": "PASS",
+    "role_checks": "PASS",
+    "capability_checks": "PASS",
+    "overall": "PASS"
+  },
   "notes": [
-    "Safe target topology fixed at 4/7",
-    "Signer set funded and prepared",
-    "Deployment path unresolved at time of checkpoint",
-    "No live governance cutover may occur before Safe deployment is verified on Arbitrum Sepolia"
+    "Safe deployed live on Arbitrum Sepolia.",
+    "DEFAULT_ADMIN_ROLE granted to Safe on all 4 core contracts.",
+    "Dual-topology verification passed before destructive revoke.",
+    "Legacy EOA admin removed after Safe grant verification.",
+    "Guardian remains separate.",
+    "Keeper remains separate.",
+    "This file is the canonical multisig governance registry for Arbitrum Sepolia."
   ]
 }

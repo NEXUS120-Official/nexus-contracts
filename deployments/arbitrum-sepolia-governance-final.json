@@ -2,7 +2,7 @@
   "network": "arbitrum-sepolia",
   "chainId": 421614,
   "deploymentType": "governance-final",
-  "status": "live-verified",
+  "status": "live-verified-multisig",
   "branch": "law-phase1",
   "activeCore": {
     "NXUSDToken": "0x515844Dd91956C749e33521B4f171dac4e04FE07",
@@ -11,13 +11,18 @@
     "LiquidationEngine": "0xF333d9ae2D70305758E714ecBeA938e9377a9f9D"
   },
   "finalGovernanceTopology": {
-    "admin": "0x7334B7F67abF673b2ba8e098151422E9d98F801A",
+    "admin": "0x8626240187bb366a8566D338b84a7F84f237164F",
+    "adminType": "safe-multisig-4-of-7",
     "guardian": "0x8EC04BBC3E3f8256d1295a6Be25ebF8DacC40c5a",
     "keeper": "0x8150dbba9F0960300a360033882685ca450a7038"
   },
   "legacyTopology": {
     "oldAdmin": "0xB4518cebFf8a92A8514f90F21B86e7Cb987F4ab6",
     "status": "removed"
+  },
+  "transitionAdminTopology": {
+    "newAdminEOA": "0x7334B7F67abF673b2ba8e098151422E9d98F801A",
+    "status": "removed-after-safe-cutover"
   },
   "verification": {
     "governanceRevokeScenario": "PASS",
@@ -27,12 +32,16 @@
     "overall": "PASS"
   },
   "multisigGovernance": {
-    "status": "framework-implemented",
-    "safeDeployed": false,
-    "cutoverExecuted": false,
+    "status": "live",
+    "safeDeployed": true,
+    "cutoverExecuted": true,
+    "safeAddress": "0x8626240187bb366a8566D338b84a7F84f237164F",
+    "safeSingleton": "0x530AfAA77269915Df68471C4eEd504D4564B020E",
+    "safeFactory": "0xCbc346Bbd200460f22285ff1B28Cb071674D3689",
     "targetThreshold": "4/7",
     "targetAdminTopology": "safe-multisig",
     "scripts": {
+      "deploy": "script/DeploySafeMultisig.s.sol",
       "verify": "script/MultisigGovernanceVerify.s.sol",
       "grant": "script/MultisigAdminGrant.s.sol",
       "revoke": "script/MultisigAdminRevoke.s.sol"
@@ -40,9 +49,11 @@
     "registry": "deployments/arbitrum-sepolia-multisig.json"
   },
   "notes": [
-    "Final governance cutover completed successfully.",
+    "Canonical final governance state is now Safe multisig admin.",
     "Legacy EOA governance topology removed.",
-    "This registry represents the canonical final governance state on Arbitrum Sepolia.",
-    "Multisig governance framework has been implemented and is pending Safe deployment and live cutover."
+    "Transition EOA admin removed after successful Safe grant and dual-topology verification.",
+    "Guardian remains separate.",
+    "Keeper remains separate.",
+    "This registry represents the canonical final governance state on Arbitrum Sepolia."
   ]
 }
