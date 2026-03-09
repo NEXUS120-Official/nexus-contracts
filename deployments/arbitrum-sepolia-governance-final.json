@@ -1,0 +1,34 @@
+{
+  "network": "arbitrum-sepolia",
+  "chainId": 421614,
+  "deploymentType": "governance-final",
+  "status": "live-verified",
+  "branch": "law-phase1",
+  "activeCore": {
+    "NXUSDToken": "0x515844Dd91956C749e33521B4f171dac4e04FE07",
+    "OracleModule": "0xa1BD5AF1174140caB018e46eBCFEf1d005c3df84",
+    "VaultManager": "0xF09AAD220C6c4d805cF6cE5561B546f51ADFBb03",
+    "LiquidationEngine": "0xF333d9ae2D70305758E714ecBeA938e9377a9f9D"
+  },
+  "finalGovernanceTopology": {
+    "admin": "0x7334B7F67abF673b2ba8e098151422E9d98F801A",
+    "guardian": "0x8EC04BBC3E3f8256d1295a6Be25ebF8DacC40c5a",
+    "keeper": "0x8150dbba9F0960300a360033882685ca450a7038"
+  },
+  "legacyTopology": {
+    "oldAdmin": "0xB4518cebFf8a92A8514f90F21B86e7Cb987F4ab6",
+    "status": "removed"
+  },
+  "verification": {
+    "governanceRevokeScenario": "PASS",
+    "postCutoverGovernanceVerify": "PASS",
+    "roleChecks": "PASS",
+    "capabilityChecks": "PASS",
+    "overall": "PASS"
+  },
+  "notes": [
+    "Final governance cutover completed successfully.",
+    "Legacy EOA governance topology removed.",
+    "This registry represents the canonical final governance state on Arbitrum Sepolia."
+  ]
+}
