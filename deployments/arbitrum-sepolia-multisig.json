@@ -5,20 +5,20 @@
   "threshold": 4,
   "signer_count": 7,
   "signers": [
-    "SIGNER_1_PENDING",
-    "SIGNER_2_PENDING",
-    "SIGNER_3_PENDING",
-    "SIGNER_4_PENDING",
-    "SIGNER_5_PENDING",
-    "SIGNER_6_PENDING",
-    "SIGNER_7_PENDING"
+    "0x13c8D58D683F83Fa001cac23acc63861C21aD0B0",
+    "0x2B10653F79A4A7C20683564A17BA5dfa9e5c3a6e",
+    "0x60a7BdE71aC2D711e38f1318d04C49df3e93C1A6",
+    "0x885Edf3B826EB5e834064b3D0EcFFA34933763F2",
+    "0xAa2465008645409d6De06F12A9756A8d6E16821A",
+    "0x6e5535143c2A35257C4f5dffd1F1E63d2F0Ff5Dd",
+    "0x9CAC9268fD9EE8414470AD40976943Be447F3CB1"
   ],
   "guardian_separate": "0x8EC04BBC3E3f8256d1295a6Be25ebF8DacC40c5a",
   "keeper_separate": "0x8150dbba9F0960300a360033882685ca450a7038",
   "notes": [
-    "Safe will become canonical admin authority",
-    "Guardian remains separate",
-    "Keeper remains separate",
-    "Final cutover requires dual-topology verify before old admin revoke"
+    "Safe target topology fixed at 4/7",
+    "Signer set funded and prepared",
+    "Deployment path unresolved at time of checkpoint",
+    "No live governance cutover may occur before Safe deployment is verified on Arbitrum Sepolia"
   ]
 }
