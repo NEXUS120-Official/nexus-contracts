@@ -1,0 +1,11 @@
+{
+  "receipt_type": "burn",
+  "actor": "VaultManager",
+  "amount": "1000",
+  "asset": "NXUSD",
+  "block_number": 248588872,
+  "tx_hash": "0xe50b90bd6b95373347296e33d2640698b495ec5c508966b60ac84aa02544805b",
+  "timestamp_utc": "2026-03-09T23:00:00Z",
+  "prev_hash": "4f74591a879b2d979b2d8835f406bde570ee029eb06c39c05576553900ab6402",
+  "receipt_hash": "b085eac1db6046b84a7c3c0de5c2374dfe554b43a2d934617af24edca71099eb"
+}
