@@ -1,0 +1,23 @@
+{
+  "constitutionVersion": "1.0",
+  "protocol": "NEXUS",
+  "engine": "NexusEconomicConstitution",
+  "invariants": [
+    {
+      "id": "CR_MIN",
+      "description": "Minimum collateral ratio must be >= 150%",
+      "value": 150
+    },
+    {
+      "id": "SUPPLY_CAP",
+      "description": "NXUSD total supply must not exceed cap",
+      "value": "1000000000 NXUSD"
+    }
+  ],
+  "status": "ACTIVE",
+  "notes": [
+    "Economic constitution defines protocol invariants.",
+    "Governance may not violate these invariants.",
+    "Auditors must verify invariants before upgrades."
+  ]
+}
