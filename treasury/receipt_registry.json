@@ -1,0 +1,36 @@
+{
+  "registry_version": "1.0",
+  "protocol": "NEXUS",
+  "status": "ACTIVE",
+  "receipt_types": [
+    {
+      "id": "mint",
+      "description": "Protocol mint event"
+    },
+    {
+      "id": "burn",
+      "description": "Protocol burn event"
+    },
+    {
+      "id": "liquidation",
+      "description": "Liquidation execution event"
+    },
+    {
+      "id": "treasury_inflow",
+      "description": "Incoming treasury asset flow"
+    },
+    {
+      "id": "treasury_outflow",
+      "description": "Outgoing treasury asset flow"
+    },
+    {
+      "id": "governance_action",
+      "description": "Governance-controlled treasury or protocol action"
+    }
+  ],
+  "notes": [
+    "Receipt types must remain deterministic and registry-backed.",
+    "New receipt types require explicit registry extension.",
+    "Registry exists to prevent semantic drift in financial event recording."
+  ]
+}

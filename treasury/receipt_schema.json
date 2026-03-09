@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "title": "NEXUS Treasury Receipt Schema",
+  "type": "object",
+  "required": [
+    "receipt_type",
+    "actor",
+    "amount",
+    "asset",
+    "block_number",
+    "tx_hash",
+    "timestamp_utc",
+    "prev_hash",
+    "receipt_hash"
+  ],
+  "properties": {
+    "receipt_type": {
+      "type": "string",
+      "description": "Type of treasury event"
+    },
+    "actor": {
+      "type": "string",
+      "description": "Originating protocol actor"
+    },
+    "amount": {
+      "type": "string",
+      "description": "Amount associated with the event"
+    },
+    "asset": {
+      "type": "string",
+      "description": "Asset symbol"
+    },
+    "block_number": {
+      "type": "integer",
+      "description": "Block number of the event"
+    },
+    "tx_hash": {
+      "type": "string",
+      "description": "Transaction hash of the event"
+    },
+    "timestamp_utc": {
+      "type": "string",
+      "description": "UTC timestamp in ISO 8601 format"
+    },
+    "prev_hash": {
+      "type": "string",
+      "description": "Hash of previous receipt in the chain"
+    },
+    "receipt_hash": {
+      "type": "string",
+      "description": "Deterministic SHA-256 hash of the canonical payload"
+    }
+  },
+  "notes": [
+    "All receipts must be serializable in canonical JSON form.",
+    "Receipt hashes must be deterministic.",
+    "prev_hash links receipts into a verifiable chain."
+  ]
+}
