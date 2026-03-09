@@ -1,0 +1,11 @@
+{
+  "receipt_type": "mint",
+  "actor": "VaultManager",
+  "amount": "10000",
+  "asset": "NXUSD",
+  "block_number": 248585237,
+  "tx_hash": "0x021b49f83828c8875b08c08cab3235ec20215b5a997cc3ae8b8a32c21e4ecf52",
+  "timestamp_utc": "2026-03-09T23:00:00Z",
+  "prev_hash": "GENESIS",
+  "receipt_hash": "4f74591a879b2d979b2d8835f406bde570ee029eb06c39c05576553900ab6402"
+}
