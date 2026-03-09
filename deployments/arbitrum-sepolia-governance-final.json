@@ -26,9 +26,23 @@
     "capabilityChecks": "PASS",
     "overall": "PASS"
   },
+  "multisigGovernance": {
+    "status": "framework-implemented",
+    "safeDeployed": false,
+    "cutoverExecuted": false,
+    "targetThreshold": "4/7",
+    "targetAdminTopology": "safe-multisig",
+    "scripts": {
+      "verify": "script/MultisigGovernanceVerify.s.sol",
+      "grant": "script/MultisigAdminGrant.s.sol",
+      "revoke": "script/MultisigAdminRevoke.s.sol"
+    },
+    "registry": "deployments/arbitrum-sepolia-multisig.json"
+  },
   "notes": [
     "Final governance cutover completed successfully.",
     "Legacy EOA governance topology removed.",
-    "This registry represents the canonical final governance state on Arbitrum Sepolia."
+    "This registry represents the canonical final governance state on Arbitrum Sepolia.",
+    "Multisig governance framework has been implemented and is pending Safe deployment and live cutover."
   ]
 }

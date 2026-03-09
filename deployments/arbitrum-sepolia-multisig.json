@@ -1,0 +1,24 @@
+{
+  "network": "arbitrum-sepolia",
+  "status": "PREPARED_NOT_DEPLOYED",
+  "safe_address": "SAFE_ADDRESS_PENDING",
+  "threshold": 4,
+  "signer_count": 7,
+  "signers": [
+    "SIGNER_1_PENDING",
+    "SIGNER_2_PENDING",
+    "SIGNER_3_PENDING",
+    "SIGNER_4_PENDING",
+    "SIGNER_5_PENDING",
+    "SIGNER_6_PENDING",
+    "SIGNER_7_PENDING"
+  ],
+  "guardian_separate": "0x8EC04BBC3E3f8256d1295a6Be25ebF8DacC40c5a",
+  "keeper_separate": "0x8150dbba9F0960300a360033882685ca450a7038",
+  "notes": [
+    "Safe will become canonical admin authority",
+    "Guardian remains separate",
+    "Keeper remains separate",
+    "Final cutover requires dual-topology verify before old admin revoke"
+  ]
+}
