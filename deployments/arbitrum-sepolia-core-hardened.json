@@ -1,0 +1,41 @@
+{
+  "network": "arbitrum-sepolia",
+  "chainId": 421614,
+  "deploymentType": "core-hardened",
+  "status": "live-verified",
+  "branch": "law-phase1",
+  "deployedAtBlock": 248448385,
+  "deployer": "0xB4518cebFf8a92A8514f90F21B86e7Cb987F4ab6",
+  "admin": "0xB4518cebFf8a92A8514f90F21B86e7Cb987F4ab6",
+  "keeper": "0xB4518cebFf8a92A8514f90F21B86e7Cb987F4ab6",
+  "guardian": "0xB4518cebFf8a92A8514f90F21B86e7Cb987F4ab6",
+  "collateralToken": "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
+  "oracleFeed": "0xd30e2101a97dcbAeBCBC04F14C3f624E67A35165",
+  "contracts": {
+    "NXUSDToken": "0x515844Dd91956C749e33521B4f171dac4e04FE07",
+    "OracleModule": "0xa1BD5AF1174140caB018e46eBCFEf1d005c3df84",
+    "VaultManager": "0xF09AAD220C6c4d805cF6cE5561B546f51ADFBb03",
+    "LiquidationEngine": "0xF333d9ae2D70305758E714ecBeA938e9377a9f9D"
+  },
+  "parameters": {
+    "oracleMaxDelay": 3600,
+    "vaultMaxDelay": 3600,
+    "minCollateralRatioBps": 15000,
+    "liquidationRatioBps": 13000,
+    "closeFactorBps": 5000
+  },
+  "verification": {
+    "postDeployAssert": "PASS",
+    "governanceVerifyRoleChecks": "PASS",
+    "governanceVerifyCapabilityChecks": "PASS",
+    "governanceVerifyOverall": "PASS"
+  },
+  "supersedes": {
+    "previousCoreRegistry": "deployments/arbitrum-sepolia-core.json",
+    "previousCoreStatus": "superseded"
+  },
+  "notes": [
+    "Hardened core deployment includes guardian and pause capability on VaultManager and LiquidationEngine.",
+    "This registry is the canonical active core deployment after hardened redeploy."
+  ]
+}
