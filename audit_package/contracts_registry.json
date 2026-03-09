@@ -1,0 +1,10 @@
+{
+  "network": "arbitrum-sepolia",
+  "chainId": 421614,
+  "coreContracts": {
+    "NXUSDToken": "0x515844Dd91956C749e33521B4f171dac4e04FE07",
+    "OracleModule": "0xa1BD5AF1174140caB018e46eBCFEf1d005c3df84",
+    "VaultManager": "0xF09AAD220C6c4d805cF6cE5561B546f51ADFBb03",
+    "LiquidationEngine": "0xF333d9ae2D70305758E714ecBeA938e9377a9f9D"
+  }
+}

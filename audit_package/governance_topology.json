@@ -1,0 +1,6 @@
+{
+  "admin": "0x8626240187bb366a8566D338b84a7F84f237164F",
+  "adminType": "safe-multisig-4-of-7",
+  "guardian": "0x8EC04BBC3E3f8256d1295a6Be25ebF8DacC40c5a",
+  "keeper": "0x8150dbba9F0960300a360033882685ca450a7038"
+}
