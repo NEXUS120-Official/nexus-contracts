@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 
 import {AccessControl} from "openzeppelin-contracts/contracts/access/AccessControl.sol";
+import {Pausable} from "openzeppelin-contracts/contracts/utils/Pausable.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 
 interface IVaultLiquidation {
@@ -12,9 +13,10 @@ interface IVaultLiquidation {
         returns (uint256 seizeAmount);
 }
 
-contract LiquidationEngine is AccessControl {
+contract LiquidationEngine is AccessControl, Pausable {
 
     bytes32 public constant KEEPER_ROLE = keccak256("KEEPER_ROLE");
+    bytes32 public constant GUARDIAN_ROLE = keccak256("GUARDIAN_ROLE");
 
     IERC20 public immutable NXUSD;
     IVaultLiquidation public vault;
@@ -44,6 +46,7 @@ contract LiquidationEngine is AccessControl {
         require(closeFactorBps_ <= 10000, "LIQ: close factor > 100%");
 
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
+        _grantRole(GUARDIAN_ROLE, admin);
 
         NXUSD = IERC20(nxusd_);
         vault = IVaultLiquidation(vault_);
@@ -72,6 +75,7 @@ contract LiquidationEngine is AccessControl {
     function executeLiquidation(address account, uint256 repayAmount)
         external
         onlyRole(KEEPER_ROLE)
+        whenNotPaused
         returns (uint256 seizeAmount)
     {
         require(account != address(0), "LIQ: account is zero");
@@ -98,5 +102,13 @@ contract LiquidationEngine is AccessControl {
         seizeAmount = vault.liquidate(account, msg.sender, repayAmount);
 
         emit LiquidationExecuted(account, msg.sender, repayAmount, seizeAmount);
+    }
+
+    function pause() external onlyRole(GUARDIAN_ROLE) {
+        _pause();
+    }
+
+    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _unpause();
     }
 }

@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 
 import {AccessControl} from "openzeppelin-contracts/contracts/access/AccessControl.sol";
+import {Pausable} from "openzeppelin-contracts/contracts/utils/Pausable.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 
 interface INXUSD {
@@ -16,9 +17,10 @@ interface IOracleModule {
         returns (uint256 price, uint256 updatedAt, uint8 decimals);
 }
 
-contract VaultManager is AccessControl {
+contract VaultManager is AccessControl, Pausable {
 
     bytes32 public constant KEEPER_ROLE = keccak256("KEEPER_ROLE");
+    bytes32 public constant GUARDIAN_ROLE = keccak256("GUARDIAN_ROLE");
 
     IERC20 public immutable COLLATERAL;
     INXUSD public immutable NXUSD;
@@ -69,6 +71,7 @@ contract VaultManager is AccessControl {
         require(maxDelay_ > 0, "VAULT: maxDelay is zero");
 
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
+        _grantRole(GUARDIAN_ROLE, admin);
 
         COLLATERAL = IERC20(collateral_);
         NXUSD = INXUSD(nxusd_);
@@ -109,7 +112,7 @@ contract VaultManager is AccessControl {
         emit MaxDelaySet(maxDelay_, msg.sender);
     }
 
-    function deposit(uint256 amount) external {
+    function deposit(uint256 amount) external whenNotPaused {
         require(amount > 0, "VAULT: amount is zero");
 
         collateralOf[msg.sender] += amount;
@@ -122,7 +125,7 @@ contract VaultManager is AccessControl {
         emit Deposit(msg.sender, amount);
     }
 
-    function withdraw(uint256 amount) external {
+    function withdraw(uint256 amount) external whenNotPaused {
         require(amount > 0, "VAULT: amount is zero");
         require(collateralOf[msg.sender] >= amount, "VAULT: insufficient collateral");
 
@@ -135,7 +138,7 @@ contract VaultManager is AccessControl {
         emit Withdraw(msg.sender, amount);
     }
 
-    function mint(uint256 amount) external {
+    function mint(uint256 amount) external whenNotPaused {
         require(amount > 0, "VAULT: amount is zero");
 
         debtOf[msg.sender] += amount;
@@ -147,7 +150,7 @@ contract VaultManager is AccessControl {
         emit Mint(msg.sender, amount);
     }
 
-    function burn(uint256 amount) external {
+    function burn(uint256 amount) external whenNotPaused {
         require(amount > 0, "VAULT: amount is zero");
         require(debtOf[msg.sender] >= amount, "VAULT: burn exceeds debt");
 
@@ -245,6 +248,7 @@ contract VaultManager is AccessControl {
     )
         external
         onlyRole(KEEPER_ROLE)
+        whenNotPaused
         returns (uint256 seizeAmount)
     {
 
@@ -288,4 +292,12 @@ contract VaultManager is AccessControl {
         emit Liquidated(account, liquidator, repayAmount, seizeAmount);
     }
 
+
+    function pause() external onlyRole(GUARDIAN_ROLE) {
+        _pause();
+    }
+
+    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _unpause();
+    }
 }
