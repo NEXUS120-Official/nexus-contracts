@@ -1,0 +1,11 @@
+{
+  "receipt_type": "governance_action",
+  "actor": "NEXUS_PROTOCOL",
+  "amount": "0",
+  "asset": "NXUSD",
+  "block_number": 0,
+  "tx_hash": "GENESIS",
+  "timestamp_utc": "2026-03-09T23:00:00Z",
+  "prev_hash": "GENESIS",
+  "receipt_hash": "GENESIS"
+}
