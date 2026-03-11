@@ -1,0 +1,11 @@
+{
+  "receipt_type": "liquidation",
+  "actor": "LiquidationEngine",
+  "amount": "1000",
+  "asset": "NXUSD",
+  "block_number": 249149856,
+  "tx_hash": "0xc0536a7f9536792975deb3731d511dd8eac8bc5e5cd337e9874e28dce78b2754",
+  "timestamp_utc": "2026-03-11T17:00:00Z",
+  "prev_hash": "b085eac1db6046b84a7c3c0de5c2374dfe554b43a2d934617af24edca71099eb",
+  "receipt_hash": "fd379bef3f23194ee226252e7160ee3532196efc957a0d3b63c92fff6eee6fd1"
+}
