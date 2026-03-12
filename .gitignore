@@ -11,3 +11,6 @@ out/
 .env
 
 broadcast/
+
+__pycache__/
+*.pyc
