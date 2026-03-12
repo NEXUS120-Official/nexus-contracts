@@ -16,11 +16,24 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout
+        uses: actions/checkout@v5
         with:
           persist-credentials: false
           submodules: recursive
+          fetch-depth: 0
+
+      - name: Sync submodules
+        run: git submodule update --init --recursive
+
+      - name: Show git status
+        run: |
+          git status
+          git submodule status --recursive
+          ls -la
+          ls -la lib || true
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
