@@ -8,13 +8,10 @@ import {IERC20} from "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 interface IVaultLiquidation {
     function debtOf(address account) external view returns (uint256);
     function isLiquidatable(address account) external view returns (bool);
-    function liquidate(address account, address liquidator, uint256 repayAmount)
-        external
-        returns (uint256 seizeAmount);
+    function liquidate(address account, address liquidator, uint256 repayAmount) external returns (uint256 seizeAmount);
 }
 
 contract LiquidationEngine is AccessControl, Pausable {
-
     bytes32 public constant KEEPER_ROLE = keccak256("KEEPER_ROLE");
     bytes32 public constant GUARDIAN_ROLE = keccak256("GUARDIAN_ROLE");
 
@@ -27,18 +24,10 @@ contract LiquidationEngine is AccessControl, Pausable {
     event VaultSet(address indexed vault, address indexed by);
 
     event LiquidationExecuted(
-        address indexed account,
-        address indexed liquidator,
-        uint256 repayAmount,
-        uint256 seizeAmount
+        address indexed account, address indexed liquidator, uint256 repayAmount, uint256 seizeAmount
     );
 
-    constructor(
-        address admin,
-        address nxusd_,
-        address vault_,
-        uint256 closeFactorBps_
-    ) {
+    constructor(address admin, address nxusd_, address vault_, uint256 closeFactorBps_) {
         require(admin != address(0), "LIQ: admin is zero");
         require(nxusd_ != address(0), "LIQ: nxusd is zero");
         require(vault_ != address(0), "LIQ: vault is zero");
@@ -62,10 +51,7 @@ contract LiquidationEngine is AccessControl, Pausable {
         emit VaultSet(vault_, msg.sender);
     }
 
-    function setCloseFactor(uint256 closeFactorBps_)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
+    function setCloseFactor(uint256 closeFactorBps_) external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(closeFactorBps_ > 0, "LIQ: close factor is zero");
         require(closeFactorBps_ <= 10000, "LIQ: close factor > 100%");
         closeFactorBps = closeFactorBps_;
@@ -89,15 +75,9 @@ contract LiquidationEngine is AccessControl, Pausable {
         require(maxRepay > 0, "LIQ: max repay is zero");
         require(repayAmount <= maxRepay, "LIQ: exceeds close factor");
 
-        require(
-            NXUSD.transferFrom(msg.sender, address(this), repayAmount),
-            "LIQ: transferFrom failed"
-        );
+        require(NXUSD.transferFrom(msg.sender, address(this), repayAmount), "LIQ: transferFrom failed");
 
-        require(
-            NXUSD.transfer(account, repayAmount),
-            "LIQ: transfer to account failed"
-        );
+        require(NXUSD.transfer(account, repayAmount), "LIQ: transfer to account failed");
 
         seizeAmount = vault.liquidate(account, msg.sender, repayAmount);
 

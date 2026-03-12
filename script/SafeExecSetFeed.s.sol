@@ -37,16 +37,7 @@ contract SafeExecSetFeedScript is Script {
         uint256 nonce = safe.nonce();
 
         bytes32 txHash = safe.getTransactionHash(
-            ORACLE_MODULE,
-            0,
-            data,
-            Enum.Operation.Call,
-            0,
-            0,
-            0,
-            address(0),
-            payable(address(0)),
-            nonce
+            ORACLE_MODULE, 0, data, Enum.Operation.Call, 0, 0, 0, address(0), payable(address(0)), nonce
         );
 
         console2.logBytes32(txHash);
@@ -56,16 +47,7 @@ contract SafeExecSetFeedScript is Script {
         vm.startBroadcast(pk1);
 
         bool ok = safe.execTransaction(
-            ORACLE_MODULE,
-            0,
-            data,
-            Enum.Operation.Call,
-            0,
-            0,
-            0,
-            address(0),
-            payable(address(0)),
-            signatures
+            ORACLE_MODULE, 0, data, Enum.Operation.Call, 0, 0, 0, address(0), payable(address(0)), signatures
         );
 
         vm.stopBroadcast();
@@ -75,13 +57,11 @@ contract SafeExecSetFeedScript is Script {
         console2.log("SAFE_EXEC_RESULT: PASS");
     }
 
-    function _buildSignatures(
-        bytes32 txHash,
-        uint256 pk1,
-        uint256 pk2,
-        uint256 pk3,
-        uint256 pk4
-    ) internal view returns (bytes memory) {
+    function _buildSignatures(bytes32 txHash, uint256 pk1, uint256 pk2, uint256 pk3, uint256 pk4)
+        internal
+        view
+        returns (bytes memory)
+    {
         Sig memory s1 = _sign(txHash, pk1);
         Sig memory s2 = _sign(txHash, pk2);
         Sig memory s3 = _sign(txHash, pk3);
@@ -91,10 +71,18 @@ contract SafeExecSetFeedScript is Script {
         _sort(arr);
 
         return abi.encodePacked(
-            arr[0].r, arr[0].s, bytes1(arr[0].v),
-            arr[1].r, arr[1].s, bytes1(arr[1].v),
-            arr[2].r, arr[2].s, bytes1(arr[2].v),
-            arr[3].r, arr[3].s, bytes1(arr[3].v)
+            arr[0].r,
+            arr[0].s,
+            bytes1(arr[0].v),
+            arr[1].r,
+            arr[1].s,
+            bytes1(arr[1].v),
+            arr[2].r,
+            arr[2].s,
+            bytes1(arr[2].v),
+            arr[3].r,
+            arr[3].s,
+            bytes1(arr[3].v)
         );
     }
 

@@ -2,16 +2,15 @@
 pragma solidity ^0.8.33;
 
 import {Test} from "forge-std/Test.sol";
-import { NXUSDToken } from "../src/core/NXUSDToken.sol";
+import {NXUSDToken} from "../src/core/NXUSDToken.sol";
 
 contract NXUSDTokenTest is Test {
-
     NXUSDToken token;
 
-    address admin  = address(0xA11CE);
+    address admin = address(0xA11CE);
     address minter = address(0xBEEF);
     address burner = address(0xCAFE);
-    address user   = address(0xD00D);
+    address user = address(0xD00D);
 
     error AccessControlUnauthorizedAccount(address account, bytes32 neededRole);
 
@@ -23,13 +22,7 @@ contract NXUSDTokenTest is Test {
     function testMintRevertsWithoutRole() public {
         uint256 amt = 100e18;
 
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                AccessControlUnauthorizedAccount.selector,
-                user,
-                token.MINTER_ROLE()
-            )
-        );
+        vm.expectRevert(abi.encodeWithSelector(AccessControlUnauthorizedAccount.selector, user, token.MINTER_ROLE()));
 
         vm.prank(user);
         token.mint(user, amt);
@@ -44,20 +37,13 @@ contract NXUSDTokenTest is Test {
         vm.prank(minter);
         token.mint(user, amt);
 
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                AccessControlUnauthorizedAccount.selector,
-                user,
-                token.BURNER_ROLE()
-            )
-        );
+        vm.expectRevert(abi.encodeWithSelector(AccessControlUnauthorizedAccount.selector, user, token.BURNER_ROLE()));
 
         vm.prank(user);
         token.burn(user, amt);
     }
 
     function testAdminSetMinterGrantsAndRevokes() public {
-
         vm.prank(admin);
         token.setMinter(minter, true);
 
@@ -70,7 +56,6 @@ contract NXUSDTokenTest is Test {
     }
 
     function testAdminSetBurnerGrantsAndRevokes() public {
-
         vm.prank(admin);
         token.setBurner(burner, true);
 
@@ -83,13 +68,12 @@ contract NXUSDTokenTest is Test {
     }
 
     function testMintEmitsEventAndUpdatesSupply() public {
-
         uint256 amt = 123e18;
 
         vm.prank(admin);
         token.setMinter(minter, true);
 
-        vm.expectEmit(true,true,true,true);
+        vm.expectEmit(true, true, true, true);
         emit NXUSDMinted(user, amt, minter);
 
         vm.prank(minter);
@@ -100,7 +84,6 @@ contract NXUSDTokenTest is Test {
     }
 
     function testBurnEmitsEventAndUpdatesSupply() public {
-
         uint256 amt = 200e18;
 
         vm.prank(admin);
@@ -112,7 +95,7 @@ contract NXUSDTokenTest is Test {
         vm.prank(minter);
         token.mint(user, amt);
 
-        vm.expectEmit(true,true,true,true);
+        vm.expectEmit(true, true, true, true);
         emit NXUSDBurned(user, amt, burner);
 
         vm.prank(burner);
@@ -126,7 +109,6 @@ contract NXUSDTokenTest is Test {
     event NXUSDBurned(address indexed from, uint256 amount, address indexed by);
 
     function testNonAdminCannotSetMinter() public {
-
         vm.expectRevert();
 
         vm.prank(user);
@@ -134,7 +116,6 @@ contract NXUSDTokenTest is Test {
     }
 
     function testNonAdminCannotSetBurner() public {
-
         vm.expectRevert();
 
         vm.prank(user);

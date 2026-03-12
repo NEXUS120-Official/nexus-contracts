@@ -21,9 +21,7 @@ interface IVaultManager {
 }
 
 interface ILiquidationEngine {
-    function executeLiquidation(address account, uint256 repayAmount)
-        external
-        returns (uint256 seizeAmount);
+    function executeLiquidation(address account, uint256 repayAmount) external returns (uint256 seizeAmount);
 }
 
 interface IERC20Like {

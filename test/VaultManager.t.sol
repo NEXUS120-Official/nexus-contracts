@@ -11,9 +11,8 @@ import {MockERC20} from "./mocks/MockERC20.sol";
 import {MockAggregatorV3} from "./mocks/MockAggregatorV3.sol";
 
 contract VaultManagerTest is Test {
-
     address admin = address(0xA11CE);
-    address user  = address(0xD00D);
+    address user = address(0xD00D);
 
     MockERC20 weth;
     NXUSDToken nxusd;
@@ -24,7 +23,6 @@ contract VaultManagerTest is Test {
     VaultManager vault;
 
     function setUp() public {
-
         weth = new MockERC20("Wrapped Ether", "WETH");
 
         vm.prank(admin);
@@ -37,15 +35,7 @@ contract VaultManagerTest is Test {
         oracle = new OracleModule(admin, address(feed), 1 hours);
 
         vm.prank(admin);
-        vault = new VaultManager(
-            admin,
-            address(weth),
-            address(nxusd),
-            address(oracle),
-            15000,
-            13000,
-            1 hours
-        );
+        vault = new VaultManager(admin, address(weth), address(nxusd), address(oracle), 15000, 13000, 1 hours);
 
         vm.prank(admin);
         nxusd.setMinter(address(vault), true);
@@ -60,7 +50,6 @@ contract VaultManagerTest is Test {
     }
 
     function testDepositAndWithdraw() public {
-
         vm.prank(user);
         vault.deposit(2 ether);
 
@@ -73,7 +62,6 @@ contract VaultManagerTest is Test {
     }
 
     function testMintFailsWithoutCollateral() public {
-
         vm.expectRevert(bytes("VAULT: unsafe mint"));
 
         vm.prank(user);
@@ -81,7 +69,6 @@ contract VaultManagerTest is Test {
     }
 
     function testMintWithinCollateralization() public {
-
         vm.prank(user);
         vault.deposit(2 ether);
 
@@ -93,7 +80,6 @@ contract VaultManagerTest is Test {
     }
 
     function testWithdrawRevertsIfUnsafe() public {
-
         vm.prank(user);
         vault.deposit(2 ether);
 
@@ -107,7 +93,6 @@ contract VaultManagerTest is Test {
     }
 
     function testBurnReducesDebt() public {
-
         vm.prank(user);
         vault.deposit(2 ether);
 
@@ -120,5 +105,4 @@ contract VaultManagerTest is Test {
         assertEq(vault.debtOf(user), 600e18);
         assertEq(nxusd.balanceOf(user), 600e18);
     }
-
 }

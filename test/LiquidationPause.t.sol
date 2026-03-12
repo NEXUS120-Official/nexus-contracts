@@ -39,23 +39,10 @@ contract LiquidationPauseTest is Test {
         oracle = new OracleModule(admin, address(feed), 1 hours);
 
         vm.prank(admin);
-        vault = new VaultManager(
-            admin,
-            address(weth),
-            address(nxusd),
-            address(oracle),
-            15000,
-            13000,
-            1 hours
-        );
+        vault = new VaultManager(admin, address(weth), address(nxusd), address(oracle), 15000, 13000, 1 hours);
 
         vm.prank(admin);
-        liq = new LiquidationEngine(
-            admin,
-            address(nxusd),
-            address(vault),
-            5000
-        );
+        liq = new LiquidationEngine(admin, address(nxusd), address(vault), 5000);
 
         vm.prank(admin);
         nxusd.setMinter(address(vault), true);
@@ -107,13 +94,7 @@ contract LiquidationPauseTest is Test {
     }
 
     function testNonGuardianCannotPauseLiquidationEngine() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                AccessControlUnauthorizedAccount.selector,
-                user,
-                liq.GUARDIAN_ROLE()
-            )
-        );
+        vm.expectRevert(abi.encodeWithSelector(AccessControlUnauthorizedAccount.selector, user, liq.GUARDIAN_ROLE()));
 
         vm.prank(user);
         liq.pause();

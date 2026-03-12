@@ -10,10 +10,7 @@ contract DeployMockAggregatorScript is Script {
 
         vm.startBroadcast(pk);
 
-        MockAggregatorV3 mockFeed = new MockAggregatorV3(
-            8,
-            200102240000
-        );
+        MockAggregatorV3 mockFeed = new MockAggregatorV3(8, 200102240000);
 
         vm.stopBroadcast();
 

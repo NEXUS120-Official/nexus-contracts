@@ -12,7 +12,6 @@ import {MockERC20} from "./mocks/MockERC20.sol";
 import {MockAggregatorV3} from "./mocks/MockAggregatorV3.sol";
 
 contract LiquidationEngineTest is Test {
-
     address admin = address(0xA11CE);
     address user = address(0xD00D);
     address keeper = address(0xBEEF);
@@ -39,23 +38,10 @@ contract LiquidationEngineTest is Test {
         oracle = new OracleModule(admin, address(feed), 1 hours);
 
         vm.prank(admin);
-        vault = new VaultManager(
-            admin,
-            address(weth),
-            address(nxusd),
-            address(oracle),
-            15000,
-            13000,
-            1 hours
-        );
+        vault = new VaultManager(admin, address(weth), address(nxusd), address(oracle), 15000, 13000, 1 hours);
 
         vm.prank(admin);
-        liq = new LiquidationEngine(
-            admin,
-            address(nxusd),
-            address(vault),
-            5000
-        );
+        liq = new LiquidationEngine(admin, address(nxusd), address(vault), 5000);
 
         vm.prank(admin);
         nxusd.setMinter(address(vault), true);
@@ -100,13 +86,7 @@ contract LiquidationEngineTest is Test {
 
         bytes32 liqKeeperRole = liq.KEEPER_ROLE();
 
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                AccessControlUnauthorizedAccount.selector,
-                address(this),
-                liqKeeperRole
-            )
-        );
+        vm.expectRevert(abi.encodeWithSelector(AccessControlUnauthorizedAccount.selector, address(this), liqKeeperRole));
 
         liq.executeLiquidation(user, 500e18);
     }

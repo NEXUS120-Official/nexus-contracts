@@ -1,4 +1,3 @@
-
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.20;
 
@@ -19,7 +18,6 @@ import {AccessControl} from "openzeppelin-contracts/contracts/access/AccessContr
  * by higher-level protocol contracts (Vault/Treasury).
  */
 contract NXUSDToken is ERC20, AccessControl {
-
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
 
@@ -31,10 +29,7 @@ contract NXUSDToken is ERC20, AccessControl {
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
     }
 
-    function mint(address to, uint256 amount)
-        external
-        onlyRole(MINTER_ROLE)
-    {
+    function mint(address to, uint256 amount) external onlyRole(MINTER_ROLE) {
         require(to != address(0), "NXUSD: to is zero");
         require(amount > 0, "NXUSD: amount is zero");
 
@@ -43,10 +38,7 @@ contract NXUSDToken is ERC20, AccessControl {
         emit NXUSDMinted(to, amount, msg.sender);
     }
 
-    function burn(address from, uint256 amount)
-        external
-        onlyRole(BURNER_ROLE)
-    {
+    function burn(address from, uint256 amount) external onlyRole(BURNER_ROLE) {
         require(from != address(0), "NXUSD: from is zero");
         require(amount > 0, "NXUSD: amount is zero");
 
@@ -55,10 +47,7 @@ contract NXUSDToken is ERC20, AccessControl {
         emit NXUSDBurned(from, amount, msg.sender);
     }
 
-    function setMinter(address account, bool enabled)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
+    function setMinter(address account, bool enabled) external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(account != address(0), "NXUSD: account is zero");
 
         if (enabled) {
@@ -68,10 +57,7 @@ contract NXUSDToken is ERC20, AccessControl {
         }
     }
 
-    function setBurner(address account, bool enabled)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
+    function setBurner(address account, bool enabled) external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(account != address(0), "NXUSD: account is zero");
 
         if (enabled) {
@@ -81,12 +67,7 @@ contract NXUSDToken is ERC20, AccessControl {
         }
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(AccessControl)
-        returns (bool)
-    {
+    function supportsInterface(bytes4 interfaceId) public view override(AccessControl) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }

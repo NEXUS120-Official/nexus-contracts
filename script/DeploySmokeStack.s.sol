@@ -49,11 +49,7 @@ contract DeploySmokeStack is Script {
 
         NXUSDToken nxusd = new NXUSDToken(cfg.admin);
 
-        OracleModule oracle = new OracleModule(
-            cfg.admin,
-            address(feed),
-            cfg.oracleMaxDelay
-        );
+        OracleModule oracle = new OracleModule(cfg.admin, address(feed), cfg.oracleMaxDelay);
 
         VaultManager vault = new VaultManager(
             cfg.admin,
@@ -65,12 +61,7 @@ contract DeploySmokeStack is Script {
             cfg.vaultMaxDelay
         );
 
-        LiquidationEngine liq = new LiquidationEngine(
-            cfg.admin,
-            address(nxusd),
-            address(vault),
-            cfg.closeFactorBps
-        );
+        LiquidationEngine liq = new LiquidationEngine(cfg.admin, address(nxusd), address(vault), cfg.closeFactorBps);
 
         nxusd.setMinter(address(vault), true);
         nxusd.setBurner(address(vault), true);

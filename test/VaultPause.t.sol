@@ -36,15 +36,7 @@ contract VaultPauseTest is Test {
         oracle = new OracleModule(admin, address(feed), 1 hours);
 
         vm.prank(admin);
-        vault = new VaultManager(
-            admin,
-            address(weth),
-            address(nxusd),
-            address(oracle),
-            15000,
-            13000,
-            1 hours
-        );
+        vault = new VaultManager(admin, address(weth), address(nxusd), address(oracle), 15000, 13000, 1 hours);
 
         vm.prank(admin);
         nxusd.setMinter(address(vault), true);
@@ -71,13 +63,7 @@ contract VaultPauseTest is Test {
     }
 
     function testNonGuardianCannotPauseVault() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                AccessControlUnauthorizedAccount.selector,
-                user,
-                vault.GUARDIAN_ROLE()
-            )
-        );
+        vm.expectRevert(abi.encodeWithSelector(AccessControlUnauthorizedAccount.selector, user, vault.GUARDIAN_ROLE()));
 
         vm.prank(user);
         vault.pause();

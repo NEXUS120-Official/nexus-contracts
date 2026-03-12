@@ -30,15 +30,8 @@ contract DeploySafeMultisigScript is Script {
         Config memory cfg = _loadConfig();
         _validateConfig(cfg);
 
-        address[7] memory fixedOwners = [
-            cfg.owner1,
-            cfg.owner2,
-            cfg.owner3,
-            cfg.owner4,
-            cfg.owner5,
-            cfg.owner6,
-            cfg.owner7
-        ];
+        address[7] memory fixedOwners =
+            [cfg.owner1, cfg.owner2, cfg.owner3, cfg.owner4, cfg.owner5, cfg.owner6, cfg.owner7];
 
         address[] memory owners = _ownersArray(fixedOwners);
 
@@ -73,11 +66,7 @@ contract DeploySafeMultisigScript is Script {
             payable(address(0))
         );
 
-        SafeProxy proxy = factory.createProxyWithNonce(
-            address(singleton),
-            initializer,
-            cfg.saltNonce
-        );
+        SafeProxy proxy = factory.createProxyWithNonce(address(singleton), initializer, cfg.saltNonce);
 
         vm.stopBroadcast();
 
@@ -164,11 +153,7 @@ contract DeploySafeMultisigScript is Script {
         _requireDistinct(cfg.owner6, cfg.owner7);
     }
 
-    function _ownersArray(address[7] memory fixedOwners)
-        internal
-        pure
-        returns (address[] memory owners)
-    {
+    function _ownersArray(address[7] memory fixedOwners) internal pure returns (address[] memory owners) {
         owners = new address[](7);
 
         for (uint256 i = 0; i < 7; i++) {

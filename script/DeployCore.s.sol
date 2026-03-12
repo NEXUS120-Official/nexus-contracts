@@ -42,11 +42,7 @@ contract DeployCore is Script {
 
         NXUSDToken nxusd = new NXUSDToken(cfg.admin);
 
-        OracleModule oracle = new OracleModule(
-            cfg.admin,
-            cfg.oracleFeed,
-            cfg.oracleMaxDelay
-        );
+        OracleModule oracle = new OracleModule(cfg.admin, cfg.oracleFeed, cfg.oracleMaxDelay);
 
         VaultManager vault = new VaultManager(
             cfg.admin,
@@ -58,12 +54,7 @@ contract DeployCore is Script {
             cfg.vaultMaxDelay
         );
 
-        LiquidationEngine liq = new LiquidationEngine(
-            cfg.admin,
-            address(nxusd),
-            address(vault),
-            cfg.closeFactorBps
-        );
+        LiquidationEngine liq = new LiquidationEngine(cfg.admin, address(nxusd), address(vault), cfg.closeFactorBps);
 
         nxusd.setMinter(address(vault), true);
         nxusd.setBurner(address(vault), true);

@@ -36,6 +36,7 @@ contract MultisigAdminGrantScript is Script {
         address liquidationEngine;
         address safeAdmin;
     }
+
     function run() external {
         uint256 pk = vm.envUint("PRIVATE_KEY");
         Config memory cfg = _loadConfig();
@@ -75,6 +76,7 @@ contract MultisigAdminGrantScript is Script {
         console2.log("MULTISIG ADMIN GRANT RESULT: PASS");
         console2.log("==================================================");
     }
+
     function _loadConfig() internal view returns (Config memory cfg) {
         cfg.nxusdToken = vm.envAddress("NXUSD_TOKEN");
         cfg.oracleModule = vm.envAddress("ORACLE_MODULE");

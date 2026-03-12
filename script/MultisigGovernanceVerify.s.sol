@@ -52,6 +52,7 @@ contract MultisigGovernanceVerifyScript is Script {
         bool capabilityChecksOk;
         bool safeChecksOk;
     }
+
     function run() external view {
         Config memory cfg = _loadConfig();
         Findings memory f;
@@ -171,24 +172,15 @@ contract MultisigGovernanceVerifyScript is Script {
         }
 
         f.roleChecksOk = _checkRole(
-            "LiquidationEngine",
-            "KEEPER_ROLE",
-            liq.hasRole(liq.KEEPER_ROLE(), cfg.expectedKeeper),
-            cfg.expectedKeeper
+            "LiquidationEngine", "KEEPER_ROLE", liq.hasRole(liq.KEEPER_ROLE(), cfg.expectedKeeper), cfg.expectedKeeper
         ) && f.roleChecksOk;
 
         f.roleChecksOk = _checkRole(
-            "NXUSDToken",
-            "MINTER_ROLE",
-            nxusd.hasRole(nxusd.MINTER_ROLE(), cfg.vaultManager),
-            cfg.vaultManager
+            "NXUSDToken", "MINTER_ROLE", nxusd.hasRole(nxusd.MINTER_ROLE(), cfg.vaultManager), cfg.vaultManager
         ) && f.roleChecksOk;
 
         f.roleChecksOk = _checkRole(
-            "NXUSDToken",
-            "BURNER_ROLE",
-            nxusd.hasRole(nxusd.BURNER_ROLE(), cfg.vaultManager),
-            cfg.vaultManager
+            "NXUSDToken", "BURNER_ROLE", nxusd.hasRole(nxusd.BURNER_ROLE(), cfg.vaultManager), cfg.vaultManager
         ) && f.roleChecksOk;
 
         console2.log("==================================================");
@@ -233,6 +225,7 @@ contract MultisigGovernanceVerifyScript is Script {
         _validateIsContract("VAULT_MANAGER", cfg.vaultManager);
         _validateIsContract("LIQUIDATION_ENGINE", cfg.liquidationEngine);
     }
+
     function _supportsSelector(address target, bytes4 selector) internal view returns (bool) {
         (bool ok,) = target.staticcall(abi.encodeWithSelector(selector));
         return ok;

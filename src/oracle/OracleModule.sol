@@ -8,13 +8,7 @@ interface IAggregatorV3 {
     function latestRoundData()
         external
         view
-        returns (
-            uint80 roundId,
-            int256 answer,
-            uint256 startedAt,
-            uint256 updatedAt,
-            uint80 answeredInRound
-        );
+        returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound);
 }
 
 contract OracleModule is AccessControl {
@@ -50,11 +44,7 @@ contract OracleModule is AccessControl {
         emit OracleMaxDelaySet(maxDelay_, msg.sender);
     }
 
-    function getPrice()
-        external
-        view
-        returns (uint256 price, uint256 updatedAt, uint8 decimals)
-    {
+    function getPrice() external view returns (uint256 price, uint256 updatedAt, uint8 decimals) {
         decimals = feed.decimals();
 
         (, int256 answer,, uint256 upd,) = feed.latestRoundData();

@@ -37,6 +37,7 @@ contract MultisigAdminRevokeScript is Script {
         address oldAdmin;
         address safeAdmin;
     }
+
     function run() external {
         uint256 pk = vm.envUint("PRIVATE_KEY");
         Config memory cfg = _loadConfig();
@@ -69,9 +70,15 @@ contract MultisigAdminRevokeScript is Script {
         vm.stopBroadcast();
 
         _requireLacksRole(nxusd.hasRole(nxusd.DEFAULT_ADMIN_ROLE(), cfg.oldAdmin), "OLD admin removed from NXUSDToken");
-        _requireLacksRole(oracle.hasRole(oracle.DEFAULT_ADMIN_ROLE(), cfg.oldAdmin), "OLD admin removed from OracleModule");
-        _requireLacksRole(vault.hasRole(vault.DEFAULT_ADMIN_ROLE(), cfg.oldAdmin), "OLD admin removed from VaultManager");
-        _requireLacksRole(liq.hasRole(liq.DEFAULT_ADMIN_ROLE(), cfg.oldAdmin), "OLD admin removed from LiquidationEngine");
+        _requireLacksRole(
+            oracle.hasRole(oracle.DEFAULT_ADMIN_ROLE(), cfg.oldAdmin), "OLD admin removed from OracleModule"
+        );
+        _requireLacksRole(
+            vault.hasRole(vault.DEFAULT_ADMIN_ROLE(), cfg.oldAdmin), "OLD admin removed from VaultManager"
+        );
+        _requireLacksRole(
+            liq.hasRole(liq.DEFAULT_ADMIN_ROLE(), cfg.oldAdmin), "OLD admin removed from LiquidationEngine"
+        );
 
         _requireHasRole(nxusd.hasRole(nxusd.DEFAULT_ADMIN_ROLE(), cfg.safeAdmin), "SAFE retained on NXUSDToken");
         _requireHasRole(oracle.hasRole(oracle.DEFAULT_ADMIN_ROLE(), cfg.safeAdmin), "SAFE retained on OracleModule");
@@ -83,6 +90,7 @@ contract MultisigAdminRevokeScript is Script {
         console2.log("MULTISIG ADMIN REVOKE RESULT: PASS");
         console2.log("==================================================");
     }
+
     function _loadConfig() internal view returns (Config memory cfg) {
         cfg.nxusdToken = vm.envAddress("NXUSD_TOKEN");
         cfg.oracleModule = vm.envAddress("ORACLE_MODULE");
