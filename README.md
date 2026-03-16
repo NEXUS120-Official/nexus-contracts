@@ -35,7 +35,32 @@ NEXUS Finance is beyond concept stage and beyond static deployment stage, but is
 ## Repository Structure
 
 ```text
-src/     Core smart contracts
-script/  Deployment and interaction scripts
-test/    Test suite
-docs/    Public protocol documentation
+src/         Core smart contracts
+script/      Deployment and interaction scripts
+test/        Test suite
+docs/        Public protocol documentation
+deployments/ Deployment artifacts and network-specific references
+
+```md
+## Documentation
+
+- [Architecture](docs/ARCHITECTURE.md)
+- [Protocol Status](docs/STATUS.md)
+- [Risk Model](docs/RISK_MODEL.md)
+- [Core Contracts Spec](docs/CONTRACTS_CORE_SPEC.md)
+- [Governance Architecture](docs/MULTISIG_GOVERNANCE_ARCHITECTURE.md)
+
+## Public Repository Scope
+
+This repository is intended to expose the public smart contract surface and a clean protocol-facing documentation layer.
+
+It does not attempt to expose every internal workflow, fundraising process, or broader infrastructure component associated with the wider NEXUS Finance system.
+
+## Vision
+
+NEXUS Finance aims to become a foundational decentralized credit infrastructure layer for resilient on-chain financial systems.
+
+## Contact
+
+For ecosystem, research, or strategic conversations:  
+`nexus120.official@gmail.com`
