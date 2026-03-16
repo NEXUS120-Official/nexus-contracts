@@ -34,14 +34,12 @@ NEXUS Finance is beyond concept stage and beyond static deployment stage, but is
 
 ## Repository Structure
 
-```text
-src/         Core smart contracts
-script/      Deployment and interaction scripts
-test/        Test suite
-docs/        Public protocol documentation
-deployments/ Deployment artifacts and network-specific references
+    src/         Core smart contracts
+    script/      Deployment and interaction scripts
+    test/        Test suite
+    docs/        Public protocol documentation
+    deployments/ Deployment artifacts and network-specific references
 
-```md
 ## Documentation
 
 - [Architecture](docs/ARCHITECTURE.md)
