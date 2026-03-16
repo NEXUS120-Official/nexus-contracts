@@ -48,6 +48,7 @@ The `scripts/` directory is reserved for auxiliary repository utilities and gene
 ## Documentation
 
 - [Review Guide](docs/REVIEW_GUIDE.md)
+- [Docs Index](docs/INDEX.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Protocol Status](docs/STATUS.md)
 - [Testnet Status](docs/TESTNET_STATUS.md)
