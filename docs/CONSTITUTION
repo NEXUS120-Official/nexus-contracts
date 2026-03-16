@@ -1,0 +1,55 @@
+# NEXUS FINANCE CONSTITUTION LAYER
+
+## Overview
+
+The `constitution/` directory contains public-facing materials related to the constitutional and invariant-oriented layer of the NEXUS Finance contracts repository.
+
+This layer exists to express protocol discipline through explicit invariant logic, registry-backed references, and constitution-oriented structure at the contract and documentation level.
+
+## Why This Layer Exists
+
+NEXUS Finance is being developed with a governance-aware and audit-oriented design posture.
+
+The constitution layer exists to support:
+
+- explicit invariant definition
+- structured protocol discipline
+- registry-backed referenceability
+- stronger long-term architectural coherence
+
+Its purpose is to reduce ambiguity around critical protocol principles and to reinforce interpretable system boundaries.
+
+## What the Constitution Layer Contains
+
+The public constitution layer currently includes materials such as:
+
+- constitution-related contract logic
+- constitution invariant documentation
+- constitution registry references
+
+These materials should be understood as part of the broader protocol discipline framework rather than as isolated experimental artifacts.
+
+## Review Role
+
+The constitution layer is intended to support higher-order technical interpretation of the protocol.
+
+It complements:
+
+- the core contracts in `src/`
+- the public architecture and risk documentation in `docs/`
+- governance-related review materials
+- deployment and registry evidence
+
+It is not intended to replace direct source code review or broader protocol evaluation.
+
+## Public Scope and Limits
+
+This layer is public-facing and explanatory in role.
+
+It does not claim to expose every broader internal governance process, every economic modeling component, or every protocol-adjacent design layer associated with the wider NEXUS Finance system.
+
+Its function is to make the constitutional and invariant-oriented layer of the public contracts repository more interpretable.
+
+## Summary
+
+The `constitution/` directory is a public constitutional and invariant-oriented layer intended to support protocol discipline, reviewer understanding, and long-term architectural clarity within the NEXUS Finance contracts repository.
