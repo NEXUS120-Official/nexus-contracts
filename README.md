@@ -44,10 +44,11 @@ NEXUS Finance is beyond concept stage and beyond static deployment stage, but is
 
 - [Architecture](docs/ARCHITECTURE.md)
 - [Protocol Status](docs/STATUS.md)
+- [Testnet Status](docs/TESTNET_STATUS.md)
 - [Risk Model](docs/RISK_MODEL.md)
 - [Core Contracts Spec](docs/CONTRACTS_CORE_SPEC.md)
 - [Governance Architecture](docs/MULTISIG_GOVERNANCE_ARCHITECTURE.md)
-
+  
 ## Public Repository Scope
 
 This repository is intended to expose the public smart contract surface and a clean protocol-facing documentation layer.
