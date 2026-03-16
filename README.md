@@ -35,10 +35,15 @@ NEXUS Finance is beyond concept stage and beyond static deployment stage, but is
 ## Repository Structure
 
     src/         Core smart contracts
-    script/      Deployment and interaction scripts
+    script/      Foundry deployment, verification, and scenario scripts
+    scripts/     Auxiliary repository utilities and generators
     test/        Test suite
     docs/        Public protocol documentation
-    deployments/ Deployment artifacts and network-specific references
+    deployments/ Deployment artifacts and network-specific referencesù
+
+The `script/` directory contains the canonical Foundry script layer used for deployment, verification, and execution scenarios.
+
+The `scripts/` directory is reserved for auxiliary repository utilities and generation helpers that are not part of the core Foundry execution path.
 
 ## Documentation
 
