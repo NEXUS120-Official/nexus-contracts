@@ -51,6 +51,7 @@ The `scripts/` directory is reserved for auxiliary repository utilities and gene
 - [Protocol Status](docs/STATUS.md)
 - [Testnet Status](docs/TESTNET_STATUS.md)
 - [Risk Model](docs/RISK_MODEL.md)
+- [Audit Package](docs/AUDIT_PACKAGE.md)
 - [Core Contracts Spec](docs/CONTRACTS_CORE_SPEC.md)
 - [Governance Architecture](docs/MULTISIG_GOVERNANCE_ARCHITECTURE.md)
   
