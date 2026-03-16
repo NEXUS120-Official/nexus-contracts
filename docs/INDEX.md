@@ -4,7 +4,9 @@
 
 This index is intended to help external readers navigate the `docs/` directory of the NEXUS Finance contracts repository.
 
-Because this directory contains both public-facing documentation and more operational or review-oriented materials, this index separates documents by role and reading purpose.
+Because this directory contains both core public-facing documentation and deeper operational, historical, governance, and review-oriented materials, this index separates documents by role and reading purpose.
+
+External readers should generally begin with the core public reading path and only move into deeper materials as needed for technical review, diligence, or operational interpretation.
 
 ## Core Public Reading Path
 
@@ -33,7 +35,7 @@ These documents are intended for readers who want more specific context on the a
 
 The `docs/` directory also contains operational, runbook, governance execution, deployment, and migration-oriented materials.
 
-These documents are useful for deeper technical review, operational understanding, and repository completeness, but are not required as first-pass reading for most external visitors.
+These documents are useful for deeper technical review, operational understanding, and repository completeness, but they are not intended to function as the primary reading layer for first-pass external review.
 
 Examples include materials related to:
 
@@ -47,11 +49,9 @@ Examples include materials related to:
 
 ## Historical and Checkpoint Materials
 
-Some documents in `docs/` exist as historical checkpoints or execution-stage records.
+Some documents in `docs/` exist as historical checkpoints, execution records, or phase-specific reference materials.
 
-These are part of the repository’s broader documentation and evidence surface, but they should generally be interpreted as historical or operational records rather than introductory materials.
-
-## Reading Guidance by Reviewer Type
+These documents are part of the repository’s broader documentation and evidence surface, but they should generally be read as supporting historical context rather than as introductory public-facing material.
 
 ### For investors and accelerator reviewers
 
