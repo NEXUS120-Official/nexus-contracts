@@ -57,6 +57,8 @@ The `scripts/` directory is reserved for auxiliary repository utilities and gene
 - [Constitution Layer](docs/CONSTITUTION.md)
 - [Core Contracts Spec](docs/CONTRACTS_CORE_SPEC.md)
 - [Governance Architecture](docs/MULTISIG_GOVERNANCE_ARCHITECTURE.md)
+
+For readers navigating the broader `docs/` directory, `docs/INDEX.md` separates the core public reading path from deeper technical, operational, and historical materials.
   
 ## Public Repository Scope
 
