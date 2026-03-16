@@ -30,10 +30,13 @@ This sequence provides a high-level understanding of protocol identity, architec
 
 After the core reading path, reviewers may continue with:
 
+- `docs/INDEX.md`
 - `docs/AUDIT_PACKAGE.md`
 - `docs/CONSTITUTION.md`
 - `docs/CONTRACTS_CORE_SPEC.md`
 - `docs/MULTISIG_GOVERNANCE_ARCHITECTURE.md`
+
+The docs index helps separate core public-facing materials from deeper operational, historical, and runbook-oriented documentation.
 
 These materials provide more specific context around review support artifacts, constitutional structure, contract modules, and governance architecture.
 
