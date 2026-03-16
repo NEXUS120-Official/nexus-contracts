@@ -1,66 +1,41 @@
-## Foundry
+# NEXUS FINANCE
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+Institutional-grade decentralized credit infrastructure for DeFi.
 
-Foundry consists of:
+NEXUS Finance is a modular overcollateralized credit protocol designed for resilient on-chain dollar markets, deterministic execution paths, governance hardening, and audit-oriented system design.
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+## Overview
 
-## Documentation
+NEXUS Finance enables overcollateralized credit issuance through a modular vault-based architecture designed for robust collateral control, predictable liquidation behavior, and governance-safe execution.
 
-https://book.getfoundry.sh/
+The protocol is being built as decentralized credit infrastructure rather than a simple stablecoin application layer.
 
-## Usage
+## Core Design Principles
 
-### Build
+- Overcollateralized credit issuance
+- Deterministic protocol behavior
+- Governance hardening
+- Modular financial architecture
+- Audit-oriented design
+- Resilient liquidation logic
 
-```shell
-$ forge build
-```
+## Current Status
 
-### Test
+- Public smart contract repository
+- Active development on Arbitrum Sepolia
+- Lifecycle validation completed across:
+  - vault activation
+  - mint
+  - repay
+  - liquidation
+- Governance-sensitive execution architecture in place
 
-```shell
-$ forge test
-```
+NEXUS Finance is beyond concept stage and beyond static deployment stage, but is not yet at mainnet-scale production rollout.
 
-### Format
+## Repository Structure
 
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+```text
+src/     Core smart contracts
+script/  Deployment and interaction scripts
+test/    Test suite
+docs/    Public protocol documentation
