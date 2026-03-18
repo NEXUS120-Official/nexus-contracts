@@ -1,76 +1,53 @@
-# NEXUS FINANCE
+# NEXUS Finance — Smart Contracts
 
-Institutional-grade decentralized credit infrastructure for DeFi.
+> Sovereign credit infrastructure contracts on Arbitrum Sepolia.
 
-NEXUS Finance is a modular overcollateralized credit protocol designed for resilient on-chain dollar markets, deterministic execution paths, governance hardening, and audit-oriented system design.
+## Deployed Contracts (Arbitrum Sepolia)
 
-## Overview
+| Contract | Address | Status |
+|----------|---------|--------|
+| NXUSDToken | 0x515844Dd91956C749e33521B4f171dac4e04FE07 | ● Live |
+| VaultManager | 0xF09AAD220C6c4d805cF6cE5561B546f51ADFBb03 | ● Live |
+| LiquidationEngine | 0xF333d9ae2D70305758E714ecBeA938e9377a9f9D | ● Live |
+| OracleModule | 0xa1BD5AF1174140caB018e46eBCFEf1d005c3df84 | ● Live |
+| WETH (collateral) | 0x980B62Da83eFf3D4576C647993b0c1D7faf17c73 | ● Live |
+| Safe Multisig | 0x8626240187bb366a8566D338b84a7F84f237164F | ● Live |
 
-NEXUS Finance enables overcollateralized credit issuance through a modular vault-based architecture designed for robust collateral control, predictable liquidation behavior, and governance-safe execution.
+## Architecture
 
-The protocol is being built as decentralized credit infrastructure rather than a simple stablecoin application layer.
+- Min collateral ratio: 150% (15000 bps)
+- Liquidation threshold: 130% (13000 bps)
+- Keeper bonus: 5%
+- Oracle: Chainlink ETH/USD with staleness check (maxDelay: 1 hour)
+- Governance: Safe 4-of-7 multisig
 
-## Core Design Principles
+## Development
 
-- Overcollateralized credit issuance
-- Deterministic protocol behavior
-- Governance hardening
-- Modular financial architecture
-- Audit-oriented design
-- Resilient liquidation logic
-
-## Current Status
-
-- Public smart contract repository
-- Active development on Arbitrum Sepolia
-- Lifecycle validation completed across:
-  - vault activation
-  - mint
-  - repay
-  - liquidation
-- Governance-sensitive execution architecture in place
-
-NEXUS Finance is beyond concept stage and beyond static deployment stage, but is not yet at mainnet-scale production rollout.
+```bash
+forge build
+forge test
+forge script script/DeployCoreHardened.s.sol --rpc-url $ARBITRUM_SEPOLIA_RPC_URL --broadcast
+```
 
 ## Repository Structure
 
-    src/         Core smart contracts
-    script/      Foundry deployment, verification, and scenario scripts
-    scripts/     Auxiliary repository utilities and generators
-    test/        Test suite
-    docs/        Public protocol documentation
-    deployments/ Deployment artifacts and network-specific referencesù
+```
+nexus-contracts/
+├── src/
+│   ├── core/          # NXUSDToken.sol
+│   ├── vault/         # VaultManager.sol, LiquidationEngine.sol
+│   └── oracle/        # OracleModule.sol
+├── script/            # Foundry deployment scripts
+├── test/              # Forge test suites
+├── deployments/       # JSON address registries
+└── constitution/      # Invariants and constitution engine
+```
 
-The `script/` directory contains the canonical Foundry script layer used for deployment, verification, and execution scenarios.
+## Live Engine
 
-The `scripts/` directory is reserved for auxiliary repository utilities and generation helpers that are not part of the core Foundry execution path.
+The NEXUS-120 Engine reads these contracts every tick:
+[NEXUS120-Official/nexus-120-engine](https://github.com/NEXUS120-Official/nexus-120-engine)
 
-## Documentation
+## License
 
-- [Review Guide](docs/REVIEW_GUIDE.md)
-- [Docs Index](docs/INDEX.md)
-- [Architecture](docs/ARCHITECTURE.md)
-- [Protocol Status](docs/STATUS.md)
-- [Testnet Status](docs/TESTNET_STATUS.md)
-- [Risk Model](docs/RISK_MODEL.md)
-- [Audit Package](docs/AUDIT_PACKAGE.md)
-- [Constitution Layer](docs/CONSTITUTION.md)
-- [Core Contracts Spec](docs/CONTRACTS_CORE_SPEC.md)
-- [Governance Architecture](docs/MULTISIG_GOVERNANCE_ARCHITECTURE.md)
-
-For readers navigating the broader `docs/` directory, `docs/INDEX.md` separates the core public reading path from deeper technical, operational, and historical materials.
-  
-## Public Repository Scope
-
-This repository is intended to expose the public smart contract surface and a clean protocol-facing documentation layer.
-
-It does not attempt to expose every internal workflow, fundraising process, or broader infrastructure component associated with the wider NEXUS Finance system.
-
-## Vision
-
-NEXUS Finance aims to become a foundational decentralized credit infrastructure layer for resilient on-chain financial systems.
-
-## Contact
-
-For ecosystem, research, or strategic conversations:  
-`nexus120.official@gmail.com`
+Proprietary — NEXUS Finance © 2026
