@@ -1,7 +1,7 @@
 # NEXUS Finance — Audit Readiness Skeleton
-## Version 1.0 · Arbitrum Sepolia Testnet
+## Version 1.1 · Arbitrum Sepolia Testnet
 
-**Status:** Phase 1 skeleton — first substantive version. Not audit-complete.
+**Status:** Phase 1 skeleton — GUARDIAN_ROLE verified on-chain, coverage baseline added. Not audit-complete.
 **Network:** Arbitrum Sepolia (chain ID 421614)
 **Prepared:** 2026-03-21
 **Scope:** On-chain contracts, governance posture, off-chain infrastructure surface
@@ -131,8 +131,8 @@ contract bytecode is immutable.
 | `DEFAULT_ADMIN_ROLE` | LiquidationEngine | Safe `0x8626...164F` | As above |
 | `MINTER_ROLE` | NXUSDToken | VaultManager `0xF09A...Bb03` | Set during `DeployCoreHardened` |
 | `BURNER_ROLE` | NXUSDToken | VaultManager `0xF09A...Bb03` | Set during `DeployCoreHardened` |
-| `GUARDIAN_ROLE` | VaultManager | **[OPEN — verify current holder]** | Assigned at deploy; confirm not revoked |
-| `GUARDIAN_ROLE` | LiquidationEngine | **[OPEN — verify current holder]** | Assigned at deploy; confirm not revoked |
+| `GUARDIAN_ROLE` | VaultManager | `0x8EC04BBC3E3f8256d1295a6Be25ebF8DacC40c5a` | Granted via `GovernanceMigrationScenario`; deployer revoked via `GovernanceRevokeScenario`. Verified live 2026-03-21. |
+| `GUARDIAN_ROLE` | LiquidationEngine | `0x8EC04BBC3E3f8256d1295a6Be25ebF8DacC40c5a` | As above. Verified live 2026-03-21. |
 | `KEEPER_ROLE` | LiquidationEngine | `0x8150dbba9f0960300a360033882685ca450a7038` | Granted via Safe `execTransaction` (SafeExecGrantVaultKeeper broadcast) |
 | `KEEPER_ROLE` | VaultManager | LiquidationEngine `0xF333...9f9D` | Set during `DeployCoreHardened` (vault.liquidate() access) |
 
@@ -183,10 +183,23 @@ Confirmed executed Safe transactions:
 - `OracleModule.setFeed(0xd30e...5165)` — switched feed from MockAggregatorV3 to live Chainlink (broadcast `SafeExecSetFeed`)
 - `VaultManager.grantRole(KEEPER_ROLE, 0x8150...7038)` — granted keeper to external address (broadcast `SafeExecGrantVaultKeeper`)
 
-> **Auditor note:** GUARDIAN_ROLE holder should be verified on-chain via
-> `hasRole(GUARDIAN_ROLE, address)` before any engagement. The deploy script
-> assigned GUARDIAN_ROLE to the guardian address from env; the current live
-> holder is not confirmed in this document.
+> **Auditor note:** GUARDIAN_ROLE is confirmed held by `0x8EC04BBC3E3f8256d1295a6Be25ebF8DacC40c5a`
+> on both VaultManager and LiquidationEngine as of 2026-03-21. The deployer EOA
+> `0xB4518cebFf8a92A8514f90F21B86e7Cb987F4ab6` holds neither GUARDIAN_ROLE nor
+> DEFAULT_ADMIN_ROLE on any core contract. Verification commands:
+> ```
+> cast call 0xF09AAD220C6c4d805cF6cE5561B546f51ADFBb03 "hasRole(bytes32,address)(bool)" \
+>   0x55435dd261a4b9b3364963f7738a7a662ad9c84396d64be3365284bb7f0a5041 \
+>   0x8EC04BBC3E3f8256d1295a6Be25ebF8DacC40c5a \
+>   --rpc-url https://sepolia-rollup.arbitrum.io/rpc
+> # → true
+>
+> cast call 0xF333d9ae2D70305758E714ecBeA938e9377a9f9D "hasRole(bytes32,address)(bool)" \
+>   0x55435dd261a4b9b3364963f7738a7a662ad9c84396d64be3365284bb7f0a5041 \
+>   0x8EC04BBC3E3f8256d1295a6Be25ebF8DacC40c5a \
+>   --rpc-url https://sepolia-rollup.arbitrum.io/rpc
+> # → true
+> ```
 
 ---
 
@@ -383,10 +396,11 @@ general users cannot execute liquidations. The keeper address holding this role 
 
 ### L-04 — GUARDIAN_ROLE Concentration
 
-The GUARDIAN_ROLE on both VaultManager and LiquidationEngine should be held by an
-authority separate from DEFAULT_ADMIN_ROLE. Current holder requires on-chain verification.
-Before a mainnet deployment, guardian separation (documented in `docs/GUARDIAN_SEPARATION_PLAN.md`)
-must be implemented.
+The GUARDIAN_ROLE on both VaultManager and LiquidationEngine is held by
+`0x8EC04BBC3E3f8256d1295a6Be25ebF8DacC40c5a` — an EOA separate from the Safe multisig
+that holds DEFAULT_ADMIN_ROLE. This satisfies the role separation principle at testnet
+stage, but before a mainnet deployment the guardian key management and rotation plan
+(documented in `docs/GUARDIAN_SEPARATION_PLAN.md`) must be finalised and implemented.
 
 ### L-05 — No Supply Cap On-Chain
 
@@ -412,11 +426,13 @@ capital adequacy, SOV_005 risk lattice) has not undergone formal verification or
 independent audit. Receipt hashes provide integrity for the outputs, but not correctness
 of the pillar logic.
 
-### L-09 — No Formal Test Coverage Report
+### L-09 — Test Coverage (Branch Coverage Gap)
 
-Test files exist (`test/VaultManager.t.sol`, `test/LiquidationEngine.t.sol`, `test/NXUSDToken.t.sol`,
-`test/OracleModule.t.sol`, `test/VaultPause.t.sol`, `test/LiquidationPause.t.sol`) but no
-formal coverage report has been produced and included in this package. **[OPEN]**
+A formal coverage baseline has been produced (see Appendix C). 32 tests pass across 6
+test suites. Production contract line coverage is 77–92%. Branch coverage is 41–61%,
+meaning a material portion of conditional paths in `VaultManager` and `LiquidationEngine`
+have no test exercise. This is the primary coverage gap. See Appendix C for the full
+per-contract breakdown.
 
 ---
 
@@ -474,8 +490,8 @@ An auditor should prioritise in the following order:
 
 | Item | Status |
 |---|---|
-| Formal test coverage report | Not produced. Tests exist but coverage is unquantified. |
-| GUARDIAN_ROLE separation | Documented in `GUARDIAN_SEPARATION_PLAN.md`; not yet executed on-chain. |
+| Formal test coverage report | Baseline produced (Appendix C). Branch coverage 41–61% — material gap remains. |
+| GUARDIAN_ROLE separation | GUARDIAN_ROLE confirmed held by EOA `0x8EC04BBC...` (separate from Safe). Key management plan documented in `GUARDIAN_SEPARATION_PLAN.md`. |
 | On-chain supply cap enforcement | Reference contract exists; not deployed or integrated. |
 | SOV_003 / SOV_005 engine logic audit | No independent review of the Python capital adequacy and risk lattice logic. |
 | Mainnet oracle configuration | Testnet feed addresses and maxDelay values are testnet-appropriate. Mainnet parameters not determined. |
@@ -538,6 +554,48 @@ script/
   GovernanceMigrationScenario.s.sol
   GovernanceRevokeScenario.s.sol
 ```
+
+---
+
+## APPENDIX C — Forge Coverage Baseline (2026-03-21)
+
+**Tool:** `forge coverage` (Foundry)
+**Test result:** 32 passed, 0 failed, 0 skipped (6 suites)
+**Run time:** 66ms
+
+### Production Contract Coverage
+
+| Contract | Lines | Statements | Branches | Functions |
+|---|---|---|---|---|
+| `src/core/NXUSDToken.sol` | 92.00% (23/25) | 88.89% (16/18) | 61.11% (11/18) | 83.33% (5/6) |
+| `src/oracle/OracleModule.sol` | 76.92% (20/26) | 73.91% (17/23) | 50.00% (9/18) | 100.00% (4/4) |
+| `src/vault/LiquidationEngine.sol` | 76.92% (30/39) | 80.00% (28/35) | 46.88% (15/32) | 66.67% (4/6) |
+| `src/vault/VaultManager.sol` | 77.87% (95/122) | 78.46% (102/130) | 40.74% (33/81) | 75.00% (12/16) |
+
+*Script files (`script/*.s.sol`) are excluded from coverage by forge; they contribute 0% and inflate the
+"total" row to 14.63% — not meaningful for audit purposes. The production contract figures above
+are the relevant baseline.*
+
+### Coverage Assessment
+
+| Metric | Assessment |
+|---|---|
+| Line coverage (prod contracts) | 77–92% — acceptable baseline |
+| Branch coverage (prod contracts) | 41–61% — **material gap**; conditional error paths not fully exercised |
+| Function coverage | 67–100% — two `LiquidationEngine` functions untested |
+| Test count | 32 total; no failures |
+
+### Known Branch Gaps (preliminary)
+
+- `VaultManager` has 81 conditional branches; 48 are untested. Likely untested paths include:
+  edge cases in `setRatios()` validation, `setOracle()` zero-address guard, and the `pause`
+  state on `deposit()` / `burn()`.
+- `LiquidationEngine` has 32 branches; 17 untested. The `pause` path on `executeLiquidation()`
+  and edge cases in `setCloseFactor()` / `setVault()` validation are probable gaps.
+- `OracleModule` has 18 branches; 9 untested. Future-timestamp rejection and zero/negative price
+  guard paths may lack dedicated tests.
+
+These gaps represent priority targets for test expansion before a formal audit engagement.
 
 ---
 
