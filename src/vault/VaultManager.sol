@@ -246,6 +246,10 @@ contract VaultManager is AccessControl, Pausable {
         debtOf[account] -= repayAmount;
         collateralOf[account] -= seizeAmount;
 
+        // CEI: all state mutations are complete before any external call.
+        // NXUSD is a protocol-controlled ERC-20 with no transfer hooks.
+        // COLLATERAL (WETH) is immutable — it cannot be replaced with a token
+        // that enables receiver callbacks. nonReentrant is not required here.
         NXUSD.burn(account, repayAmount);
 
         require(COLLATERAL.transfer(liquidator, seizeAmount), "VAULT: collateral transfer failed");

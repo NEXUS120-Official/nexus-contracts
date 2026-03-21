@@ -34,6 +34,13 @@ contract OracleModule is AccessControl {
 
     function setFeed(address feed_) external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(feed_ != address(0), "ORACLE: feed is zero");
+        // Smoke-check: verify the feed is callable and currently returns a positive answer.
+        // Catches mis-addressed feeds and contracts that don't implement IAggregatorV3
+        // at commit time rather than at next vault operation.
+        // Note: a feed that passes here could still return invalid data later;
+        // getPrice() enforces all freshness and sign checks at usage time.
+        (, int256 answer,,,) = IAggregatorV3(feed_).latestRoundData();
+        require(answer > 0, "ORACLE: new feed answer not positive");
         feed = IAggregatorV3(feed_);
         emit OracleFeedSet(feed_, msg.sender);
     }
