@@ -32,7 +32,7 @@ contract VaultManagerTest is Test {
         feed.setRoundData(2000_00000000, block.timestamp);
 
         vm.prank(admin);
-        oracle = new OracleModule(admin, address(feed), 1 hours);
+        oracle = new OracleModule(admin, address(feed), 1 hours, address(0));
 
         vm.prank(admin);
         vault = new VaultManager(admin, address(weth), address(nxusd), address(oracle), 15000, 13000, 1 hours);

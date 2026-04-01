@@ -22,7 +22,7 @@ contract OracleModuleAdversarialTest is Test {
         feed.setRoundData(2000_00000000, block.timestamp);
 
         vm.prank(admin);
-        oracle = new OracleModule(admin, address(feed), 1 hours);
+        oracle = new OracleModule(admin, address(feed), 1 hours, address(0));
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -31,17 +31,17 @@ contract OracleModuleAdversarialTest is Test {
 
     function testConstructorRevertsAdminZero() public {
         vm.expectRevert(bytes("ORACLE: admin is zero"));
-        new OracleModule(address(0), address(feed), 1 hours);
+        new OracleModule(address(0), address(feed), 1 hours, address(0));
     }
 
     function testConstructorRevertsFeedZero() public {
         vm.expectRevert(bytes("ORACLE: feed is zero"));
-        new OracleModule(admin, address(0), 1 hours);
+        new OracleModule(admin, address(0), 1 hours, address(0));
     }
 
     function testConstructorRevertsMaxDelayZero() public {
         vm.expectRevert(bytes("ORACLE: maxDelay is zero"));
-        new OracleModule(admin, address(feed), 0);
+        new OracleModule(admin, address(feed), 0, address(0));
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -112,6 +112,38 @@ contract OracleModuleAdversarialTest is Test {
         vm.prank(admin);
         oracle.setMaxDelay(2 hours);
         assertEq(oracle.maxDelay(), 2 hours);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // ORC-03: setMaxDelay upper bound (Hardening Round 3)
+    // MAX_DELAY = 7 days. Setting type(uint256).max would silently disable
+    // freshness checks — the upper bound prevents this attack vector.
+    // ─────────────────────────────────────────────────────────────────────────
+
+    function testSetMaxDelayRevertsWhenTooLarge() public {
+        vm.expectRevert(bytes("ORACLE: maxDelay too large"));
+        vm.prank(admin);
+        oracle.setMaxDelay(7 days + 1);
+    }
+
+    // type(uint256).max is the canonical attack value — also rejected
+    function testSetMaxDelayRevertsForMaxUint() public {
+        vm.expectRevert(bytes("ORACLE: maxDelay too large"));
+        vm.prank(admin);
+        oracle.setMaxDelay(type(uint256).max);
+    }
+
+    // Exactly MAX_DELAY (7 days) must be accepted
+    function testSetMaxDelayAcceptsMaxAllowed() public {
+        vm.prank(admin);
+        oracle.setMaxDelay(7 days);
+        assertEq(oracle.maxDelay(), 7 days);
+    }
+
+    // Constructor with maxDelay > MAX_DELAY must revert
+    function testConstructorRevertsMaxDelayTooLarge() public {
+        vm.expectRevert(bytes("ORACLE: maxDelay too large"));
+        new OracleModule(admin, address(feed), 7 days + 1, address(0));
     }
 
     // ─────────────────────────────────────────────────────────────────────────

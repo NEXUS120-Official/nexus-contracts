@@ -18,6 +18,11 @@ contract VaultManager is AccessControl, Pausable {
     bytes32 public constant KEEPER_ROLE = keccak256("KEEPER_ROLE");
     bytes32 public constant GUARDIAN_ROLE = keccak256("GUARDIAN_ROLE");
 
+    /// @notice Hard upper bound on maxDelay. Prevents disabling freshness checks
+    ///         via extreme values (e.g. type(uint256).max). 7 days is generous
+    ///         enough for irregular testnet feeds while blocking the attack vector.
+    uint256 public constant MAX_DELAY = 7 days;
+
     IERC20 public immutable COLLATERAL;
     INXUSD public immutable NXUSD;
     IOracleModule public oracle;
@@ -29,6 +34,11 @@ contract VaultManager is AccessControl, Pausable {
     mapping(address => uint256) public collateralOf;
     mapping(address => uint256) public debtOf;
 
+    /// @notice H-04 FIX: Cumulative NXUSD debt written off via resolveBadDebt().
+    ///         Represents NXUSD supply that is no longer backed by protocol collateral.
+    ///         Governance must address undercollateralized supply via recapitalization.
+    uint256 public totalBadDebt;
+
     event Deposit(address indexed user, uint256 amount);
     event Withdraw(address indexed user, uint256 amount);
     event Mint(address indexed user, uint256 amount);
@@ -39,6 +49,19 @@ contract VaultManager is AccessControl, Pausable {
     event MaxDelaySet(uint256 maxDelay, address indexed by);
 
     event Liquidated(address indexed account, address indexed liquidator, uint256 repayAmount, uint256 seizeAmount);
+
+    /// @notice H-04 FIX: Emitted when a position is resolved via the emergency bad debt path.
+    ///         collateralSeized: all remaining collateral transferred to the guardian caller.
+    ///         debtCleared: full debt amount cleared from vault accounting.
+    ///         badDebt: uncovered portion of debt (debtCleared minus what collateral could cover).
+    ///         resolvedBy: the GUARDIAN_ROLE address that called resolveBadDebt().
+    event BadDebtResolved(
+        address indexed account,
+        uint256 collateralSeized,
+        uint256 debtCleared,
+        uint256 badDebt,
+        address indexed resolvedBy
+    );
 
     constructor(
         address admin,
@@ -59,6 +82,7 @@ contract VaultManager is AccessControl, Pausable {
         require(minCrBps_ >= liqCrBps_, "VAULT: minCR < liqCR");
 
         require(maxDelay_ > 0, "VAULT: maxDelay is zero");
+        require(maxDelay_ <= MAX_DELAY, "VAULT: maxDelay too large");
 
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
         _grantRole(GUARDIAN_ROLE, admin);
@@ -78,6 +102,13 @@ contract VaultManager is AccessControl, Pausable {
 
     function setOracle(address oracle_) external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(oracle_ != address(0), "VAULT: oracle is zero");
+        // Smoke-check: verify the candidate implements IOracleModule and currently
+        // returns a positive price. Catches mis-addressed contracts and contracts
+        // that do not implement the interface at commit time.
+        // Note: if the oracle's underlying feed is currently stale, this call will
+        // revert; setOracle should only be called while the candidate oracle is live.
+        (uint256 price,,) = IOracleModule(oracle_).getPrice();
+        require(price > 0, "VAULT: new oracle zero price");
         oracle = IOracleModule(oracle_);
         emit OracleSet(oracle_, msg.sender);
     }
@@ -95,6 +126,7 @@ contract VaultManager is AccessControl, Pausable {
 
     function setMaxDelay(uint256 maxDelay_) external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(maxDelay_ > 0, "VAULT: maxDelay is zero");
+        require(maxDelay_ <= MAX_DELAY, "VAULT: maxDelay too large");
         maxDelay = maxDelay_;
         emit MaxDelaySet(maxDelay_, msg.sender);
     }
@@ -255,6 +287,71 @@ contract VaultManager is AccessControl, Pausable {
         require(COLLATERAL.transfer(liquidator, seizeAmount), "VAULT: collateral transfer failed");
 
         emit Liquidated(account, liquidator, repayAmount, seizeAmount);
+    }
+
+    /// @notice H-04 FIX: Resolve a vault position that is irrecoverably underwater.
+    ///
+    ///         Normal liquidation reverts when the 5% keeper bonus causes the required
+    ///         seize amount to exceed available collateral. Positions in that range
+    ///         become permanently stuck with no protocol resolution path.
+    ///
+    ///         This function provides a controlled emergency path:
+    ///           - Only callable by GUARDIAN_ROLE.
+    ///           - Only callable when the position is objectively irrecoverable:
+    ///             _seizeAmountForRepay(fullDebt, price) > remaining collateral.
+    ///           - Seizes all remaining collateral and transfers it to the caller.
+    ///           - Clears debtOf and collateralOf for the account (replay-safe).
+    ///           - Increments totalBadDebt with the uncovered debt portion.
+    ///           - Does NOT enforce whenNotPaused: guardian should be able to clear
+    ///             bad debt positions even while the vault is paused for incident response.
+    ///
+    ///         The NXUSD corresponding to the cleared debt remains in circulation as
+    ///         undercollateralized supply. Governance must address this via a separate
+    ///         recapitalization or burn mechanism.
+    ///
+    /// @param  account  The vault position to resolve.
+    /// @return seized   Amount of collateral transferred to the guardian caller.
+    function resolveBadDebt(address account)
+        external
+        onlyRole(GUARDIAN_ROLE)
+        returns (uint256 seized)
+    {
+        require(account != address(0), "VAULT: account is zero");
+
+        uint256 debt = debtOf[account];
+        require(debt > 0, "VAULT: no debt");
+
+        uint256 col = collateralOf[account];
+
+        (uint256 price,, uint8 dec) = _oracleSnapshot();
+
+        // Verify the position cannot be resolved through the normal liquidation path.
+        // Uses the same arithmetic as liquidate() to ensure consistency:
+        // normal liquidation reverts when _seizeAmountForRepay(fullDebt) > col.
+        uint256 seizeForFull = _seizeAmountForRepay(debt, price, dec);
+        require(seizeForFull > col, "VAULT: not bad debt");
+
+        // Compute the uncovered debt portion.
+        // The collateral covers at most: covered = col * price * 10000 / (denom * 10500)
+        // (inverse of _seizeAmountForRepay). Since seizeForFull > col, covered < debt.
+        uint256 denom = 10 ** uint256(dec);
+        uint256 covered = (col * price * 10000) / (denom * 10500);
+        uint256 bad = debt - covered; // underflow impossible: proven above
+
+        seized = col;
+
+        // CEI: clear vault state before any external call.
+        debtOf[account] = 0;
+        collateralOf[account] = 0;
+        totalBadDebt += bad;
+
+        emit BadDebtResolved(account, seized, debt, bad, msg.sender);
+
+        // Transfer remaining collateral to the guardian. Skipped if col == 0
+        // (position had debt but no collateral — fully underwater).
+        if (seized > 0) {
+            require(COLLATERAL.transfer(msg.sender, seized), "VAULT: collateral transfer failed");
+        }
     }
 
     function pause() external onlyRole(GUARDIAN_ROLE) {

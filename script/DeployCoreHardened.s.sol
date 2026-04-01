@@ -21,6 +21,10 @@ contract DeployCoreHardenedScript is Script {
         address collateralToken;
         address keeper;
         address guardian;
+        // H-03: Chainlink L2 sequencer uptime feed. address(0) disables the check.
+        // Arbitrum One: 0xFdB631F5EE196F0ed6FAa767959853A9F217697D
+        // Testnets / non-Arbitrum: address(0)
+        address sequencerFeed;
         uint256 oracleMaxDelay;
         uint256 vaultMaxDelay;
         uint256 minCollateralRatioBps;
@@ -34,6 +38,9 @@ contract DeployCoreHardenedScript is Script {
         cfg.collateralToken = vm.envAddress("COLLATERAL_TOKEN");
         cfg.keeper = vm.envAddress("KEEPER");
         cfg.guardian = vm.envAddress("GUARDIAN");
+        // SEQUENCER_FEED: mandatory for Arbitrum One mainnet deployments.
+        // Omitting or setting to address(0) disables the H-03 protection.
+        cfg.sequencerFeed = vm.envOr("SEQUENCER_FEED", address(0));
 
         cfg.oracleMaxDelay = vm.envUint("ORACLE_MAX_DELAY");
         cfg.vaultMaxDelay = vm.envUint("VAULT_MAX_DELAY");
@@ -50,7 +57,7 @@ contract DeployCoreHardenedScript is Script {
 
         NXUSDToken nxusd = new NXUSDToken(cfg.admin);
 
-        OracleModule oracle = new OracleModule(cfg.admin, cfg.oracleFeed, cfg.oracleMaxDelay);
+        OracleModule oracle = new OracleModule(cfg.admin, cfg.oracleFeed, cfg.oracleMaxDelay, cfg.sequencerFeed);
 
         VaultManager vault = new VaultManager(
             cfg.admin,
@@ -93,6 +100,7 @@ contract DeployCoreHardenedScript is Script {
         console2.log("Keeper            :", cfg.keeper);
         console2.log("Guardian          :", cfg.guardian);
         console2.log("Oracle Feed       :", cfg.oracleFeed);
+        console2.log("Sequencer Feed    :", cfg.sequencerFeed);
         console2.log("Collateral Token  :", cfg.collateralToken);
         console2.log("Vault paused      :", vault.paused());
         console2.log("Liq paused        :", liq.paused());

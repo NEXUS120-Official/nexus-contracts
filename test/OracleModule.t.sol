@@ -20,7 +20,7 @@ contract OracleModuleTest is Test {
         feed.setRoundData(100_000_000, block.timestamp);
 
         vm.prank(admin);
-        oracle = new OracleModule(admin, address(feed), 1 hours);
+        oracle = new OracleModule(admin, address(feed), 1 hours, address(0));
     }
 
     function testNonAdminCannotSetFeed() public {

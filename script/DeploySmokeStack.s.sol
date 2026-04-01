@@ -49,7 +49,7 @@ contract DeploySmokeStack is Script {
 
         NXUSDToken nxusd = new NXUSDToken(cfg.admin);
 
-        OracleModule oracle = new OracleModule(cfg.admin, address(feed), cfg.oracleMaxDelay);
+        OracleModule oracle = new OracleModule(cfg.admin, address(feed), cfg.oracleMaxDelay, address(0));
 
         VaultManager vault = new VaultManager(
             cfg.admin,

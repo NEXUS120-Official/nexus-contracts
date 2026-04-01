@@ -38,7 +38,7 @@ contract VaultManagerAdversarialTest is Test {
         feed.setRoundData(2000_00000000, block.timestamp);
 
         vm.prank(admin);
-        oracle = new OracleModule(admin, address(feed), 1 hours);
+        oracle = new OracleModule(admin, address(feed), 1 hours, address(0));
 
         vm.prank(admin);
         vault = new VaultManager(
@@ -127,6 +127,31 @@ contract VaultManagerAdversarialTest is Test {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
+    // ORC-04: setOracle smoke-check (Hardening Round 3)
+    // Equivalent protection to OracleModule.setFeed() hardened in v1.2.
+    // ─────────────────────────────────────────────────────────────────────────
+
+    // Calling getPrice() on an EOA returns empty bytes; ABI-decoding (uint256,uint256,uint8)
+    // from empty data panics → caught by vm.expectRevert() without arguments.
+    function testSetOracleRevertsForNonContract() public {
+        address eoa = address(0xBEEF);
+        vm.expectRevert();
+        vm.prank(admin);
+        vault.setOracle(eoa);
+    }
+
+    // A contract that implements IOracleModule but reports price=0 must be rejected.
+    // Prevents installing a permanently-broken oracle that would lock the vault.
+    function testSetOracleRevertsForZeroPriceOracle() public {
+        MockOracle badOracle = new MockOracle();
+        badOracle.setPrice(0);
+
+        vm.expectRevert(bytes("VAULT: new oracle zero price"));
+        vm.prank(admin);
+        vault.setOracle(address(badOracle));
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
     // setRatios
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -185,6 +210,33 @@ contract VaultManagerAdversarialTest is Test {
         vm.prank(admin);
         vault.setMaxDelay(2 hours);
         assertEq(vault.maxDelay(), 2 hours);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // ORC-03: setMaxDelay upper bound (Hardening Round 3)
+    // ─────────────────────────────────────────────────────────────────────────
+
+    function testSetMaxDelayRevertsWhenTooLarge() public {
+        vm.expectRevert(bytes("VAULT: maxDelay too large"));
+        vm.prank(admin);
+        vault.setMaxDelay(7 days + 1);
+    }
+
+    function testSetMaxDelayRevertsForMaxUint() public {
+        vm.expectRevert(bytes("VAULT: maxDelay too large"));
+        vm.prank(admin);
+        vault.setMaxDelay(type(uint256).max);
+    }
+
+    function testSetMaxDelayAcceptsMaxAllowed() public {
+        vm.prank(admin);
+        vault.setMaxDelay(7 days);
+        assertEq(vault.maxDelay(), 7 days);
+    }
+
+    function testConstructorRevertsMaxDelayTooLarge() public {
+        vm.expectRevert(bytes("VAULT: maxDelay too large"));
+        new VaultManager(admin, address(weth), address(nxusd), address(oracle), 15000, 13000, 7 days + 1);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
