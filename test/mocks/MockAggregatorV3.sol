@@ -24,6 +24,12 @@ contract MockAggregatorV3 {
         answeredInRound = roundId;
     }
 
+    /// @notice [TASK 2] Override answeredInRound independently from roundId.
+    ///         Used to test the Chainlink round completeness check in OracleModule.
+    function setAnsweredInRound(uint80 answeredInRound_) external {
+        answeredInRound = answeredInRound_;
+    }
+
     function latestRoundData() external view returns (uint80, int256, uint256, uint256, uint80) {
         return (roundId, answer, startedAt, updatedAt, answeredInRound);
     }

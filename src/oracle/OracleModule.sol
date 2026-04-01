@@ -117,11 +117,20 @@ contract OracleModule is AccessControl {
 
         decimals = feed.decimals();
 
-        (, int256 answer,, uint256 upd,) = feed.latestRoundData();
+        // [TASK 2] Capture roundId and answeredInRound for completeness check.
+        // answeredInRound < roundId means the aggregator has not yet finalised
+        // the current round — the answer field still reflects the previous round's
+        // value. Consuming it would be silently stale.
+        //
+        // Defence-in-depth: VaultManager._oracleSnapshot() applies an additional
+        // independent staleness window (vault.maxDelay) to the returned updatedAt.
+        // The effective staleness limit is min(oracle.maxDelay, vault.maxDelay).
+        (uint80 roundId, int256 answer,, uint256 upd, uint80 answeredInRound) = feed.latestRoundData();
         require(answer > 0, "ORACLE: price <= 0");
         require(upd > 0, "ORACLE: no update");
         require(block.timestamp >= upd, "ORACLE: time skew");
         require(block.timestamp - upd <= maxDelay, "ORACLE: stale");
+        require(answeredInRound >= roundId, "ORACLE: stale round");
 
         // casting to uint256 is safe because answer > 0 is enforced above
         // forge-lint: disable-next-line(unsafe-typecast)

@@ -92,9 +92,10 @@ contract VaultBadDebtTest is Test {
     // ── Helper: confirm normal liquidation is stuck ───────────────────────────
 
     function _confirmNormalLiquidationReverts() internal {
-        bytes32 keeperRole_ = vault.KEEPER_ROLE();
+        // [TASK 1] Register this test contract as the liqEngine so that
+        // vault.liquidate() accepts the call and we can observe the seize revert.
         vm.prank(admin);
-        vault.grantRole(keeperRole_, address(this));
+        vault.setLiquidationEngine(address(this));
 
         vm.expectRevert(bytes("VAULT: seize exceeds collateral"));
         vault.liquidate(VICTIM, address(this), DEBT);

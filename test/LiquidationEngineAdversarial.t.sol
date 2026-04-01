@@ -58,6 +58,11 @@ contract LiquidationEngineAdversarialTest is Test {
         vm.prank(admin);
         vault.grantRole(vaultKeeperRole, address(liq));
 
+        // [TASK 1] Register liq as the canonical liquidation engine so that
+        // vault.liquidate() accepts calls from it.
+        vm.prank(admin);
+        vault.setLiquidationEngine(address(liq));
+
         bytes32 liqKeeperRole = liq.KEEPER_ROLE(); // read before prank
         vm.prank(admin);
         liq.grantRole(liqKeeperRole, keeper);

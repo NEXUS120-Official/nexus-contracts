@@ -69,6 +69,10 @@ contract DeployCore is Script {
         vault.grantRole(vault.KEEPER_ROLE(), address(liq));
         liq.grantRole(liq.KEEPER_ROLE(), cfg.keeper);
 
+        // [TASK 1] Register liq as the canonical liquidation engine.
+        // vault.liquidate() is permanently blocked until this is set.
+        vault.setLiquidationEngine(address(liq));
+
         vm.stopBroadcast();
 
         console2.log("=== NEXUS CORE DEPLOYED ===");
@@ -82,5 +86,14 @@ contract DeployCore is Script {
         console2.log("Oracle Feed       :", cfg.oracleFeed);
         console2.log("Sequencer Feed    :", cfg.sequencerFeed);
         console2.log("Collateral Token  :", cfg.collateralToken);
+
+        // [TASK 4] Deployment safety warning: sequencerFeed == address(0) means the
+        // Chainlink L2 sequencer uptime check is disabled. This is intentional on
+        // testnets and non-Arbitrum networks, but must be set on Arbitrum One mainnet
+        // (0xFdB631F5EE196F0ed6FAa767959853A9F217697D). Deployer must confirm this is intentional.
+        if (cfg.sequencerFeed == address(0)) {
+            console2.log("WARNING: sequencerFeed is address(0) — L2 sequencer uptime check is DISABLED.");
+            console2.log("         On Arbitrum One mainnet, set SEQUENCER_FEED=0xFdB631F5EE196F0ed6FAa767959853A9F217697D");
+        }
     }
 }

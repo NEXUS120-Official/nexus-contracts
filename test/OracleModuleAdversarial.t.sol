@@ -178,4 +178,46 @@ contract OracleModuleAdversarialTest is Test {
         vm.expectRevert(bytes("ORACLE: time skew"));
         oracle.getPrice();
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // [TASK 2] Chainlink round completeness check (answeredInRound >= roundId)
+    //
+    // A Chainlink aggregator writes latestRoundData() with the answer from the
+    // *previous* completed round before the current round is finalised.
+    // When answeredInRound < roundId the price is stale — the current round
+    // has not yet been answered. The check prevents consuming incomplete data.
+    // ─────────────────────────────────────────────────────────────────────────
+
+    // Happy path: answeredInRound == roundId — valid completed round.
+    function testGetPricePassesOnValidRound() public {
+        // setRoundData() always sets answeredInRound = roundId, so this is the
+        // normal operating state. Confirm getPrice() succeeds.
+        (uint256 price,, uint8 decimals) = oracle.getPrice();
+        assertEq(price, 2000_00000000);
+        assertEq(decimals, 8);
+    }
+
+    // Stale round: answeredInRound < roundId — aggregator has not yet written
+    // the answer for the current round. getPrice() must revert.
+    function testGetPriceRevertsOnStaleRound() public {
+        // setRoundData increments roundId and sets answeredInRound = roundId.
+        // Then we lower answeredInRound to simulate an incomplete round.
+        feed.setRoundData(2000_00000000, block.timestamp); // roundId increments to 3
+        feed.setAnsweredInRound(2); // answeredInRound (2) < roundId (3) → stale
+
+        vm.expectRevert(bytes("ORACLE: stale round"));
+        oracle.getPrice();
+    }
+
+    // Boundary: answeredInRound == roundId - 1 (one round behind) → stale
+    function testGetPriceRevertsWhenAnsweredInRoundOneBelow() public {
+        // After setUp: roundId = 2, answeredInRound = 2.
+        // Call setRoundData once more: roundId = 3, answeredInRound = 3.
+        // Then set answeredInRound = 2 to simulate exactly one round behind.
+        feed.setRoundData(1800_00000000, block.timestamp); // roundId → 3
+        feed.setAnsweredInRound(2); // answeredInRound (2) < roundId (3)
+
+        vm.expectRevert(bytes("ORACLE: stale round"));
+        oracle.getPrice();
+    }
 }

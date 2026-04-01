@@ -39,6 +39,12 @@ contract VaultManager is AccessControl, Pausable {
     ///         Governance must address undercollateralized supply via recapitalization.
     uint256 public totalBadDebt;
 
+    /// @notice [TASK 1] Canonical liquidation engine address.
+    ///         Only this address may call liquidate(). Must be set via
+    ///         setLiquidationEngine() after deployment. Until set (address(0)),
+    ///         liquidate() is permanently blocked — this is intentional.
+    address public liqEngine;
+
     event Deposit(address indexed user, uint256 amount);
     event Withdraw(address indexed user, uint256 amount);
     event Mint(address indexed user, uint256 amount);
@@ -49,6 +55,9 @@ contract VaultManager is AccessControl, Pausable {
     event MaxDelaySet(uint256 maxDelay, address indexed by);
 
     event Liquidated(address indexed account, address indexed liquidator, uint256 repayAmount, uint256 seizeAmount);
+
+    /// @notice [TASK 1] Emitted when the canonical liquidation engine address is updated.
+    event LiquidationEngineSet(address indexed liqEngine, address indexed by);
 
     /// @notice H-04 FIX: Emitted when a position is resolved via the emergency bad debt path.
     ///         collateralSeized: all remaining collateral transferred to the guardian caller.
@@ -131,6 +140,17 @@ contract VaultManager is AccessControl, Pausable {
         emit MaxDelaySet(maxDelay_, msg.sender);
     }
 
+    /// @notice [TASK 1] Register the canonical liquidation engine.
+    ///         Only the registered address may call liquidate(). Calling with
+    ///         address(0) permanently blocks liquidation until re-set.
+    function setLiquidationEngine(address _liq) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(_liq != address(0), "VAULT: liqEngine is zero");
+        liqEngine = _liq;
+        emit LiquidationEngineSet(_liq, msg.sender);
+    }
+
+    /// @notice Deposit collateral (WETH). CEI: state credited before transferFrom.
+    ///         COLLATERAL is immutable (WETH) — no receiver hooks possible.
     function deposit(uint256 amount) external whenNotPaused {
         require(amount > 0, "VAULT: amount is zero");
 
@@ -141,6 +161,8 @@ contract VaultManager is AccessControl, Pausable {
         emit Deposit(msg.sender, amount);
     }
 
+    /// @notice Withdraw collateral. CEI: balance decremented before safety check and transfer.
+    ///         _isSafe() reverts if the position would breach minCollateralRatioBps post-withdrawal.
     function withdraw(uint256 amount) external whenNotPaused {
         require(amount > 0, "VAULT: amount is zero");
         require(collateralOf[msg.sender] >= amount, "VAULT: insufficient collateral");
@@ -154,6 +176,9 @@ contract VaultManager is AccessControl, Pausable {
         emit Withdraw(msg.sender, amount);
     }
 
+    /// @notice Mint NXUSD against deposited collateral.
+    ///         CEI: debt recorded first, safety check enforced before external mint.
+    ///         Reverts if resulting CR would fall below minCollateralRatioBps.
     function mint(uint256 amount) external whenNotPaused {
         require(amount > 0, "VAULT: amount is zero");
 
@@ -166,6 +191,8 @@ contract VaultManager is AccessControl, Pausable {
         emit Mint(msg.sender, amount);
     }
 
+    /// @notice Burn NXUSD to reduce vault debt. No oracle read — safe to call regardless of price.
+    ///         CEI: debt decremented before NXUSD.burn() external call.
     function burn(uint256 amount) external whenNotPaused {
         require(amount > 0, "VAULT: amount is zero");
         require(debtOf[msg.sender] >= amount, "VAULT: burn exceeds debt");
@@ -247,10 +274,13 @@ contract VaultManager is AccessControl, Pausable {
 
     function liquidate(address account, address liquidator, uint256 repayAmount)
         external
-        onlyRole(KEEPER_ROLE)
         whenNotPaused
         returns (uint256 seizeAmount)
     {
+        // [TASK 1] Only the registered liquidation engine may trigger liquidations.
+        // This prevents any KEEPER_ROLE holder from bypassing LiquidationEngine's
+        // close-factor limit by calling VaultManager.liquidate() directly.
+        require(msg.sender == liqEngine, "VAULT: only liqEngine");
         require(account != address(0), "VAULT: account is zero");
         require(liquidator != address(0), "VAULT: liquidator is zero");
         require(repayAmount > 0, "VAULT: repay is zero");
@@ -305,9 +335,11 @@ contract VaultManager is AccessControl, Pausable {
     ///           - Does NOT enforce whenNotPaused: guardian should be able to clear
     ///             bad debt positions even while the vault is paused for incident response.
     ///
-    ///         The NXUSD corresponding to the cleared debt remains in circulation as
-    ///         undercollateralized supply. Governance must address this via a separate
-    ///         recapitalization or burn mechanism.
+    ///         IMPORTANT: This function does NOT burn the NXUSD corresponding to the
+    ///         cleared debt. That NXUSD remains in circulation as undercollateralized
+    ///         supply, tracked in totalBadDebt. Governance must address this via a
+    ///         separate recapitalization or protocol-level burn — both of which are
+    ///         external to this contract and outside VaultManager's authority.
     ///
     /// @param  account  The vault position to resolve.
     /// @return seized   Amount of collateral transferred to the guardian caller.

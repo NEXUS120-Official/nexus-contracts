@@ -58,6 +58,23 @@ contract LiquidationEngine is AccessControl, Pausable {
         emit CloseFactorSet(closeFactorBps_, msg.sender);
     }
 
+    /// @notice Execute a partial or full liquidation of an undercollateralized vault.
+    ///
+    ///         Sequence (atomic — reverts entirely if any step fails):
+    ///           1. Enforce close-factor: repayAmount ≤ debt * closeFactorBps / 10000.
+    ///           2. Pull repayAmount NXUSD from keeper (transferFrom).
+    ///           3. Forward NXUSD to the account so that vault.liquidate() can burn it.
+    ///           4. Call vault.liquidate(), which burns from the account and transfers
+    ///              seized collateral directly to the keeper (msg.sender).
+    ///
+    ///         Steps 2–4 are a single atomic EVM transaction. ERC-20 transfer has no
+    ///         receiver hooks (not ERC-777), so no reentrancy window exists between
+    ///         steps 3 and 4. If vault.liquidate() reverts for any reason, all three
+    ///         token moves are unwound by the EVM.
+    ///
+    /// @param account      The vault position to liquidate.
+    /// @param repayAmount  Amount of NXUSD to repay. Must not exceed close-factor cap.
+    /// @return seizeAmount Amount of collateral transferred to the keeper.
     function executeLiquidation(address account, uint256 repayAmount)
         external
         onlyRole(KEEPER_ROLE)

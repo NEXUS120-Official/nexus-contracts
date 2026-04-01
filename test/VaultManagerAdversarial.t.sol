@@ -501,10 +501,12 @@ contract VaultManagerAdversarialTest is Test {
     // liquidate() input validation — accessed directly with KEEPER_ROLE
     // ─────────────────────────────────────────────────────────────────────────
 
+    /// @dev [TASK 1] Register this test contract as the canonical liqEngine so that
+    ///      vault.liquidate() accepts direct calls from the test.
+    ///      Replaces the former KEEPER_ROLE grant pattern.
     function _grantKeeperToThis() internal {
-        bytes32 keeperRole = vault.KEEPER_ROLE(); // read before prank to avoid consuming it
         vm.prank(admin);
-        vault.grantRole(keeperRole, address(this));
+        vault.setLiquidationEngine(address(this));
     }
 
     function _openUnsafeVault() internal {

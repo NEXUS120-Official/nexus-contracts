@@ -7,8 +7,20 @@ broadcast/
 !/broadcast/*/31337/
 !/broadcast/**/dry-run/
 
-# Environment files
+# Environment files — ALL variants
 .env
+.env.*
+!.env.example
+!.env.mainnet.example
+
+# Internal proof and verification artifacts — never expose to audit repo
+LIVE_PROOF_SUMMARY.txt
+VERIFY_PROOF_SUMMARY.txt
+proof_live.txt
+proof_verify.txt
+
+# Embedded front-end app — separate repo, must not leak into contracts audit package
+nexus-site/
 
 # Python cache artifacts
 __pycache__/
