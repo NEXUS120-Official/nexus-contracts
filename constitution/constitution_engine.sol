@@ -2,13 +2,31 @@
 pragma solidity ^0.8.20;
 
 /*
-NEXUS ECONOMIC CONSTITUTION ENGINE
-SOV-006
-
-Defines protocol invariants that governance must not violate.
-This contract does not control the system directly.
-It exposes invariant checks for auditors and governance verification.
-*/
+ * ============================================================================
+ * AUDIT SCOPE: EXCLUDED — NOT DEPLOYED
+ * ============================================================================
+ *
+ * This contract has NOT been deployed to any network and is NOT part of the
+ * live protocol. It is a reference document expressing invariant intent.
+ *
+ * INTERFACE MISMATCH (blocking deployment):
+ * NexusEconomicConstitution.assertProtocolInvariant() calls
+ * IVaultManager.collateralRatio() — this function does not exist on the
+ * deployed VaultManager contract. VaultManager exposes per-user state as
+ * collateralOf[address] and debtOf[address] mappings; there is no
+ * protocol-level collateralRatio() view function.
+ *
+ * INVARIANT STATUS IN LIVE SYSTEM:
+ * - MIN_COLLATERAL_RATIO (150%): enforced per-position by VaultManager._isSafe()
+ *   at every mint and withdraw operation. See invariant I-01, I-02 in audit doc.
+ * - MAX_NXUSD_SUPPLY: NOT enforced on-chain. Known gap, see L-05 in audit doc.
+ *
+ * DO NOT AUDIT THIS FILE. Exclude from all automated tools and scope definitions.
+ *
+ * NEXUS ECONOMIC CONSTITUTION ENGINE — SOV-006
+ * Defines protocol invariants that governance must not violate.
+ * ============================================================================
+ */
 
 interface IVaultManager {
     function collateralRatio() external view returns (uint256);

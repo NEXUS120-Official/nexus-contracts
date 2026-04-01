@@ -1,6 +1,16 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.20;
 
+// ============================================================================
+// NOT PRODUCTION — DEVELOPMENT / TESTING MOCK ONLY
+// ============================================================================
+// This contract is a Chainlink AggregatorV3 stub used exclusively for local
+// development and integration testing. It MUST NOT be deployed to any live
+// network or referenced in production deployments.
+//
+// AUDIT SCOPE: EXCLUDED — not part of the deployed protocol surface.
+// ============================================================================
+
 contract MockAggregatorV3 {
     uint8 public immutable decimals;
     int256 private _answer;

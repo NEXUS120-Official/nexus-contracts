@@ -21,17 +21,35 @@ contract NXUSDToken is ERC20, AccessControl {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
 
+    /// @notice Maximum total supply of NXUSD. 0 = no cap enforced (default).
+    ///         Governance must call setMaxSupply() to activate the cap.
+    uint256 public maxSupply;
+
     event NXUSDMinted(address indexed to, uint256 amount, address indexed by);
     event NXUSDBurned(address indexed from, uint256 amount, address indexed by);
+    event MaxSupplySet(uint256 maxSupply, address indexed by);
 
     constructor(address admin) ERC20("Nexus USD", "NXUSD") {
         require(admin != address(0), "NXUSD: admin is zero");
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
     }
 
+    function setMaxSupply(uint256 maxSupply_) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        // Allow setting to 0 (disables cap) or any value >= current supply.
+        // Prevents governance from accidentally freezing all future minting by
+        // setting a cap below what already exists.
+        require(maxSupply_ == 0 || maxSupply_ >= totalSupply(), "NXUSD: cap below current supply");
+        maxSupply = maxSupply_;
+        emit MaxSupplySet(maxSupply_, msg.sender);
+    }
+
     function mint(address to, uint256 amount) external onlyRole(MINTER_ROLE) {
         require(to != address(0), "NXUSD: to is zero");
         require(amount > 0, "NXUSD: amount is zero");
+        // Enforce supply cap. Cap is active when maxSupply > 0.
+        // Checked here (not in VaultManager) so that any future minter granted
+        // via setMinter() is also subject to the cap.
+        require(maxSupply == 0 || totalSupply() + amount <= maxSupply, "NXUSD: supply cap exceeded");
 
         _mint(to, amount);
 
