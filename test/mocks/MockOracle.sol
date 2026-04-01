@@ -8,17 +8,25 @@ pragma solidity ^0.8.20;
 contract MockOracle {
     uint256 public price;
     uint256 public updatedAt;
-    uint8   public decimals;
+    uint8 public decimals;
 
     constructor() {
-        price     = 2000e8;
+        price = 2000e8;
         updatedAt = block.timestamp;
-        decimals  = 8;
+        decimals = 8;
     }
 
-    function setPrice(uint256 p) external { price = p; }
-    function setUpdatedAt(uint256 t) external { updatedAt = t; }
-    function setDecimals(uint8 d) external { decimals = d; }
+    function setPrice(uint256 p) external {
+        price = p;
+    }
+
+    function setUpdatedAt(uint256 t) external {
+        updatedAt = t;
+    }
+
+    function setDecimals(uint8 d) external {
+        decimals = d;
+    }
 
     function getPrice() external view returns (uint256, uint256, uint8) {
         return (price, updatedAt, decimals);

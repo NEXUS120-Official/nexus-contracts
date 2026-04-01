@@ -7,24 +7,24 @@ pragma solidity ^0.8.33;
 
 import {Test} from "forge-std/Test.sol";
 
-import {NXUSDToken}    from "../src/core/NXUSDToken.sol";
-import {OracleModule}  from "../src/oracle/OracleModule.sol";
-import {VaultManager}  from "../src/vault/VaultManager.sol";
+import {NXUSDToken} from "../src/core/NXUSDToken.sol";
+import {OracleModule} from "../src/oracle/OracleModule.sol";
+import {VaultManager} from "../src/vault/VaultManager.sol";
 
-import {MockERC20}        from "./mocks/MockERC20.sol";
+import {MockERC20} from "./mocks/MockERC20.sol";
 import {MockAggregatorV3} from "./mocks/MockAggregatorV3.sol";
-import {MockOracle}       from "./mocks/MockOracle.sol";
+import {MockOracle} from "./mocks/MockOracle.sol";
 
 contract VaultManagerAdversarialTest is Test {
-    address admin   = address(0xA11CE);
-    address user    = address(0xD00D);
-    address other   = address(0xBAD0);
+    address admin = address(0xA11CE);
+    address user = address(0xD00D);
+    address other = address(0xBAD0);
 
-    MockERC20        weth;
-    NXUSDToken       nxusd;
+    MockERC20 weth;
+    NXUSDToken nxusd;
     MockAggregatorV3 feed;
-    OracleModule     oracle;
-    VaultManager     vault;
+    OracleModule oracle;
+    VaultManager vault;
 
     error AccessControlUnauthorizedAccount(address account, bytes32 neededRole);
 
@@ -41,9 +41,7 @@ contract VaultManagerAdversarialTest is Test {
         oracle = new OracleModule(admin, address(feed), 1 hours, address(0));
 
         vm.prank(admin);
-        vault = new VaultManager(
-            admin, address(weth), address(nxusd), address(oracle), 15000, 13000, 1 hours
-        );
+        vault = new VaultManager(admin, address(weth), address(nxusd), address(oracle), 15000, 13000, 1 hours);
 
         vm.prank(admin);
         nxusd.setMinter(address(vault), true);
@@ -112,9 +110,7 @@ contract VaultManagerAdversarialTest is Test {
     }
 
     function testSetOracleRevertsForNonAdmin() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(AccessControlUnauthorizedAccount.selector, other, bytes32(0))
-        );
+        vm.expectRevert(abi.encodeWithSelector(AccessControlUnauthorizedAccount.selector, other, bytes32(0)));
         vm.prank(other);
         vault.setOracle(address(oracle));
     }
@@ -174,9 +170,7 @@ contract VaultManagerAdversarialTest is Test {
     }
 
     function testSetRatiosRevertsForNonAdmin() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(AccessControlUnauthorizedAccount.selector, other, bytes32(0))
-        );
+        vm.expectRevert(abi.encodeWithSelector(AccessControlUnauthorizedAccount.selector, other, bytes32(0)));
         vm.prank(other);
         vault.setRatios(15000, 13000);
     }
@@ -199,9 +193,7 @@ contract VaultManagerAdversarialTest is Test {
     }
 
     function testSetMaxDelayRevertsForNonAdmin() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(AccessControlUnauthorizedAccount.selector, other, bytes32(0))
-        );
+        vm.expectRevert(abi.encodeWithSelector(AccessControlUnauthorizedAccount.selector, other, bytes32(0)));
         vm.prank(other);
         vault.setMaxDelay(2 hours);
     }

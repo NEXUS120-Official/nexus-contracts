@@ -311,11 +311,7 @@ contract VaultManager is AccessControl, Pausable {
     ///
     /// @param  account  The vault position to resolve.
     /// @return seized   Amount of collateral transferred to the guardian caller.
-    function resolveBadDebt(address account)
-        external
-        onlyRole(GUARDIAN_ROLE)
-        returns (uint256 seized)
-    {
+    function resolveBadDebt(address account) external onlyRole(GUARDIAN_ROLE) returns (uint256 seized) {
         require(account != address(0), "VAULT: account is zero");
 
         uint256 debt = debtOf[account];

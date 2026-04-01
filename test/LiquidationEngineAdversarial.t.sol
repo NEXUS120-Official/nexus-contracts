@@ -7,25 +7,25 @@ pragma solidity ^0.8.33;
 
 import {Test} from "forge-std/Test.sol";
 
-import {NXUSDToken}         from "../src/core/NXUSDToken.sol";
-import {OracleModule}       from "../src/oracle/OracleModule.sol";
-import {VaultManager}       from "../src/vault/VaultManager.sol";
-import {LiquidationEngine}  from "../src/vault/LiquidationEngine.sol";
+import {NXUSDToken} from "../src/core/NXUSDToken.sol";
+import {OracleModule} from "../src/oracle/OracleModule.sol";
+import {VaultManager} from "../src/vault/VaultManager.sol";
+import {LiquidationEngine} from "../src/vault/LiquidationEngine.sol";
 
-import {MockERC20}        from "./mocks/MockERC20.sol";
+import {MockERC20} from "./mocks/MockERC20.sol";
 import {MockAggregatorV3} from "./mocks/MockAggregatorV3.sol";
 
 contract LiquidationEngineAdversarialTest is Test {
-    address admin   = address(0xA11CE);
-    address user    = address(0xD00D);
-    address keeper  = address(0xBEEF);
-    address other   = address(0xBAD0);
+    address admin = address(0xA11CE);
+    address user = address(0xD00D);
+    address keeper = address(0xBEEF);
+    address other = address(0xBAD0);
 
-    MockERC20        weth;
-    NXUSDToken       nxusd;
+    MockERC20 weth;
+    NXUSDToken nxusd;
     MockAggregatorV3 feed;
-    OracleModule     oracle;
-    VaultManager     vault;
+    OracleModule oracle;
+    VaultManager vault;
     LiquidationEngine liq;
 
     error AccessControlUnauthorizedAccount(address account, bytes32 neededRole);
@@ -43,9 +43,7 @@ contract LiquidationEngineAdversarialTest is Test {
         oracle = new OracleModule(admin, address(feed), 1 hours, address(0));
 
         vm.prank(admin);
-        vault = new VaultManager(
-            admin, address(weth), address(nxusd), address(oracle), 15000, 13000, 1 hours
-        );
+        vault = new VaultManager(admin, address(weth), address(nxusd), address(oracle), 15000, 13000, 1 hours);
 
         vm.prank(admin);
         liq = new LiquidationEngine(admin, address(nxusd), address(vault), 5000);
@@ -142,9 +140,7 @@ contract LiquidationEngineAdversarialTest is Test {
     }
 
     function testSetVaultRevertsForNonAdmin() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(AccessControlUnauthorizedAccount.selector, other, bytes32(0))
-        );
+        vm.expectRevert(abi.encodeWithSelector(AccessControlUnauthorizedAccount.selector, other, bytes32(0)));
         vm.prank(other);
         liq.setVault(address(vault));
     }
@@ -173,9 +169,7 @@ contract LiquidationEngineAdversarialTest is Test {
     }
 
     function testSetCloseFactorRevertsForNonAdmin() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(AccessControlUnauthorizedAccount.selector, other, bytes32(0))
-        );
+        vm.expectRevert(abi.encodeWithSelector(AccessControlUnauthorizedAccount.selector, other, bytes32(0)));
         vm.prank(other);
         liq.setCloseFactor(7000);
     }

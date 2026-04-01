@@ -16,27 +16,27 @@ pragma solidity ^0.8.33;
 
 import {Test} from "forge-std/Test.sol";
 
-import {NXUSDToken}   from "../src/core/NXUSDToken.sol";
+import {NXUSDToken} from "../src/core/NXUSDToken.sol";
 import {VaultManager} from "../src/vault/VaultManager.sol";
 
-import {MockERC20}  from "./mocks/MockERC20.sol";
+import {MockERC20} from "./mocks/MockERC20.sol";
 import {MockOracle} from "./mocks/MockOracle.sol";
 
 contract VaultBadDebtTest is Test {
-    address admin    = address(0xA11CE);
-    address user     = address(0xD00D);
+    address admin = address(0xA11CE);
+    address user = address(0xD00D);
     address guardian = address(0xCAFE);
     address attacker = address(0xBAD0);
 
-    MockERC20        weth;
-    NXUSDToken       nxusd;
-    MockOracle       mockOracle;
-    VaultManager     vault;
+    MockERC20 weth;
+    NXUSDToken nxusd;
+    MockOracle mockOracle;
+    VaultManager vault;
 
     // Victim setup: 1 ETH deposited, 600,000 NXUSD minted at $1M/ETH
     address constant VICTIM = address(0xDEAD);
     uint256 constant DEPOSIT = 1 ether;
-    uint256 constant DEBT    = 600_000e18;
+    uint256 constant DEBT = 600_000e18;
 
     error AccessControlUnauthorizedAccount(address account, bytes32 neededRole);
 
@@ -58,8 +58,8 @@ contract VaultBadDebtTest is Test {
             address(weth),
             address(nxusd),
             address(mockOracle),
-            15000,  // 150% min CR
-            13000,  // 130% liq CR
+            15000, // 150% min CR
+            13000, // 130% liq CR
             1 hours
         );
 
@@ -111,9 +111,8 @@ contract VaultBadDebtTest is Test {
         normalOracle.setUpdatedAt(block.timestamp);
 
         vm.prank(admin);
-        VaultManager normalVault = new VaultManager(
-            admin, address(weth), address(nxusd), address(normalOracle), 15000, 13000, 1 hours
-        );
+        VaultManager normalVault =
+            new VaultManager(admin, address(weth), address(nxusd), address(normalOracle), 15000, 13000, 1 hours);
 
         vm.prank(admin);
         nxusd.setMinter(address(normalVault), true);
@@ -205,9 +204,7 @@ contract VaultBadDebtTest is Test {
 
     function testResolveBadDebtRevertsForNonGuardian() public {
         bytes32 guardianRole = vault.GUARDIAN_ROLE();
-        vm.expectRevert(
-            abi.encodeWithSelector(AccessControlUnauthorizedAccount.selector, attacker, guardianRole)
-        );
+        vm.expectRevert(abi.encodeWithSelector(AccessControlUnauthorizedAccount.selector, attacker, guardianRole));
         vm.prank(attacker);
         vault.resolveBadDebt(VICTIM);
     }
@@ -220,9 +217,7 @@ contract VaultBadDebtTest is Test {
         vault.grantRole(keeperRole, keeper);
 
         bytes32 guardianRole = vault.GUARDIAN_ROLE();
-        vm.expectRevert(
-            abi.encodeWithSelector(AccessControlUnauthorizedAccount.selector, keeper, guardianRole)
-        );
+        vm.expectRevert(abi.encodeWithSelector(AccessControlUnauthorizedAccount.selector, keeper, guardianRole));
         vm.prank(keeper);
         vault.resolveBadDebt(VICTIM);
     }
