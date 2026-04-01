@@ -92,8 +92,10 @@ contract DeployCore is Script {
         // testnets and non-Arbitrum networks, but must be set on Arbitrum One mainnet
         // (0xFdB631F5EE196F0ed6FAa767959853A9F217697D). Deployer must confirm this is intentional.
         if (cfg.sequencerFeed == address(0)) {
-            console2.log("WARNING: sequencerFeed is address(0) — L2 sequencer uptime check is DISABLED.");
-            console2.log("         On Arbitrum One mainnet, set SEQUENCER_FEED=0xFdB631F5EE196F0ed6FAa767959853A9F217697D");
+            console2.log("WARNING: sequencerFeed is address(0) -- L2 sequencer uptime check is DISABLED.");
+            console2.log(
+                "         On Arbitrum One mainnet, set SEQUENCER_FEED=0xFdB631F5EE196F0ed6FAa767959853A9F217697D"
+            );
         }
     }
 }
